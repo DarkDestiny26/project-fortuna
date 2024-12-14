@@ -1,0 +1,118 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #f5f7fa;
+    --text-color: #333;
+    --error-color: #e74c3c;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #c3cfe2 100%);
+    padding-top: 40px; /* Add padding to account for the fixed header */
+}
+
+.site-header {
+    background-color: #55b3f3;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.logo {
+    max-height: 100px;
+    width: auto;
+    margin-left: 15px;
+}
+
+/* Adjust logo position for larger screens */
+@media (min-width: 768px) {
+    .logo {
+        margin-left: 0; /* Remove the left margin on larger screens */
+    }
+}
+
+/* Add more left padding to the container on larger screens */
+@media (min-width: 992px) {
+    .site-header .container-fluid {
+        padding-left: 30px;
+    }
+}
+
+.login-container {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+h1 {
+    color: var(--text-color);
+    font-weight: 300;
+    font-size: 1.8rem;
+}
+
+.form-control {
+    border: 2px solid #eee;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3a7bd5;
+    border-color: #3a7bd5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px;
+    }
+
+    .site-header {
+        padding: 5px 0;
+    }
+
+    .logo {
+        max-height: 50px;
+    }
+}
+

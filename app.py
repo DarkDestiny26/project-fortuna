@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates', static_folder='static', static_url_path='/')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:julianwong7828@localhost:5432/testdb'
 
     db.init_app(app)
