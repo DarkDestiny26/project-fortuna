@@ -82,13 +82,13 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.forgot-password {
+.create-account {
     color: var(--primary-color);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-.forgot-password:hover {
+.create-account:hover {
     text-decoration: underline;
 }
 
