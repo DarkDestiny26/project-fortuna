@@ -20,16 +20,19 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
 
-    from models import User
+    from myapp.blueprints.auth.models import User
 
     @login_manager.user_loader
     def load_user(uid):
         return User.query.get(uid)
-    
-    bcrypt = Bcrypt(app)
      
-    from routes import register_routes
-    register_routes(app, db, bcrypt)
+    # import and register blueprints 
+    from myapp.blueprints.auth.routes import auth
+    from myapp.blueprints.home.routes import home
+    
+    auth.bcrypt = Bcrypt(app)
+    app.register_blueprint(auth, url_prefix='/auth')
+    app.register_blueprint(home, url_prefix='/home')
 
     migrate = Migrate(app, db)
 
