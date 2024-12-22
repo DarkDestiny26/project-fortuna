@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from myapp.blueprints.auth.models import User
 from myapp.app import db
 
-auth = Blueprint('auth', __name__, template_folder='templates')
+auth = Blueprint('auth', __name__, template_folder='templates', static_folder='static')
 bcrypt = None
 
 
@@ -25,7 +25,7 @@ def login():
         # If username in database, check password
         if auth.bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
-            return redirect(url_for('home.homepage'))
+            return redirect(url_for('home.dashboard'))
         else:
             return 'U typed the wrong password baka!'
         
@@ -49,4 +49,4 @@ def register():
 @auth.route('/logout')
 def logout():
     logout_user()
-    return 'You are logged out'
+    return render_template('auth/logout.html')

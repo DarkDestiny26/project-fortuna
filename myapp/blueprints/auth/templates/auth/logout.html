@@ -1,0 +1,16 @@
+{% extends "auth/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6 col-lg-4">
+                <div class="login-container">
+                    <h1 class="text-center mb-4">You are logged out</h1>
+                    <div class="text-center mt-3">
+                        <a href="{{url_for('auth.login')}}" class="create-account">Login again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
