@@ -1,5 +1,8 @@
-{% extends "base.html" %}
+{% extends "auth/base.html" %}
 {% block title %} Register - Fortuna Wealth Maangement {% endblock %}
+{% block custom_css %}
+    <link href="{{ url_for('auth.static', filename='css/auth.css') }}" rel="stylesheet">
+{% endblock custom_css %}
 {% block content %}
 <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
