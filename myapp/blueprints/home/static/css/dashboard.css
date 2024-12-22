@@ -1,25 +1,5 @@
-:root {
-    --primary-color: #4a90e2;
-    --secondary-color: #f5f7fa;
-    --text-color: #333;
-    --error-color: #e74c3c;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--secondary-color);
-    min-height: 100vh;
-}
-
 .site-header {
-    background-color: #55b3f3;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1rem 0;
-}
-
-.logo {
-    max-height: 40px;
-    width: auto;
+    position: static;
 }
 
 .sidebar {
@@ -51,6 +31,7 @@ body {
 .dashboard-card:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

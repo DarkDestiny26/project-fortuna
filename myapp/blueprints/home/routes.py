@@ -15,3 +15,8 @@ def homepage():
 @login_required
 def dashboard():
     return render_template('home/dashboard.html')
+
+@home.route('/dashboard2')
+@login_required
+def dashboard2():
+    return render_template('home/dashboard2.html')
