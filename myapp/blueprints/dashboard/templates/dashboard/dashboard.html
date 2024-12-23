@@ -1,9 +1,9 @@
-{% extends "home/base.html" %}
+{% extends "dashboard/base.html" %}
 
 {% block title %} Home - Fortuna Wealth Management {% endblock title %}
 
 {% block custom_css %}
-    <link href="{{ url_for('home.static', filename='css/dashboard.css') }}" rel="stylesheet">
+    <link href="{{ url_for('dashboard.static', filename='css/dashboard.css') }}" rel="stylesheet">
 {% endblock custom_css %}
 
 {% block content %}
@@ -33,6 +33,24 @@
                 </div>
             </div>
             <!-- More cards would be added here -->
+            <div class="col-md-4 mb-4">
+                <div class="card dashboard-card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <i data-lucide="dollar-sign" class="text-muted"></i>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="card-subtitle mb-1 text-muted">Total Balance 2</h6>
+                                <h2 class="card-title mb-0">$24,500.00</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="#" class="text-primary">View all</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 {% endblock  %}

@@ -28,11 +28,11 @@ def create_app():
      
     # import and register blueprints 
     from myapp.blueprints.auth.routes import auth
-    from myapp.blueprints.home.routes import home
+    from myapp.blueprints.dashboard.routes import dashboard
     
     auth.bcrypt = Bcrypt(app)
     app.register_blueprint(auth, url_prefix='/auth')
-    app.register_blueprint(home, url_prefix='/home')
+    app.register_blueprint(dashboard, url_prefix='/home/dashboard')
 
     migrate = Migrate(app, db)
 

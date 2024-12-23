@@ -25,7 +25,7 @@ def login():
         # If username in database, check password
         if auth.bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
-            return redirect(url_for('home.dashboard'))
+            return redirect(url_for('dashboard.index'))
         else:
             return 'U typed the wrong password baka!'
         
