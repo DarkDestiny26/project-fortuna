@@ -33,7 +33,9 @@ def create_app():
     
     auth.bcrypt = Bcrypt(app)
     app.register_blueprint(auth, url_prefix='/auth')
+
     app.register_blueprint(dashboard, url_prefix='/home/dashboard')
+    
     app.register_blueprint(portfolio, url_prefix='/home/portfolio')
 
     migrate = Migrate(app, db)
