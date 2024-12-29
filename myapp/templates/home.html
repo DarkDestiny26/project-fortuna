@@ -40,13 +40,13 @@
             <!-- Sidebar Navigation -->
             <aside class="sidebar bg-white">
                 <nav class="flex-column nav-pills p-3">
-                    <a href="{{ url_for('dashboard.index') }}" class="nav-link active d-flex align-items-center mb-2">
+                    <a href="{{ url_for('dashboard.index') }}" class="nav-link d-flex align-items-center mb-2">
                         <i data-lucide="home" class="me-2"></i>
                         Dashboard
                     </a>
-                    <a href="#" class="nav-link d-flex align-items-center mb-2">
+                    <a href="{{ url_for('portfolio.index') }}" class="nav-link d-flex align-items-center mb-2">
                         <i data-lucide="dollar-sign" class="me-2"></i>
-                        Transactions
+                        Portfolio
                     </a>
                     <a href="#" class="nav-link d-flex align-items-center mb-2">
                         <i data-lucide="pie-chart" class="me-2"></i>
@@ -64,9 +64,7 @@
             </aside>
 
             <!-- Main Content Area -->
-            {% block content %}
-            
-            {% endblock content %}
+            {% block content %} {% endblock content %}
         </div>
     </div>
 
@@ -75,6 +73,7 @@
         // Initialize Lucide icons
         lucide.createIcons();
     </script>
+    {% block custom_js %} {% endblock custom_js %}
 </body>
 </html>
 

@@ -1,0 +1,52 @@
+{% extends "home.html" %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{{url_for('portfolio.static', filename='css/portfolio.css')}}">
+{% endblock custom_css %}
+
+{% block content %}
+    <main class="content flex-grow-1 p-4">
+        <div class="container">
+            <h1>Select a Portfolio</h1>
+            
+            <div class="search-filter">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search portfolios...">
+                </div>
+                <select>
+                    <option value="all">All Types</option>
+                    <option value="Stocks">Stocks</option>
+                    <option value="Bonds">Bonds</option>
+                    <option value="Mixed">Mixed</option>
+                    <option value="REITs">REITs</option>
+                </select>
+                <button class="suggested-portfolios">✨ Suggested Portfolios</button>
+            </div>
+
+           <div class="portfolio-grid">
+                {% for portfolio in portfolios %}
+                <div class="portfolio-card">
+                    <div class="portfolio-card-header">
+                        <h2 class="portfolio-name">{{ portfolio.name }}</h2>
+                    </div>
+                    <div class="portfolio-card-content">
+                        <div class="portfolio-card-text">
+                            <p class="portfolio-type">Type: {{ portfolio.type }}</p>
+                            <p class="portfolio-value">{{ portfolio.value }}</p>
+                            <p class="portfolio-performance {% if portfolio.performance.startswith('+') %}performance-positive{% else %}performance-negative{% endif %}">
+                                {{ portfolio.performance }}
+                            </p>
+                        </div>
+                        <img src="{{ portfolio.image_url }}" alt="{{ portfolio.name }}" class="portfolio-card-image">
+                    </div>
+                    <div class="portfolio-card-footer">
+                        <button>View Details</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+{% endblock content %}
+

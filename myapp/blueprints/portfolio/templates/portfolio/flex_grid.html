@@ -1,0 +1,104 @@
+<!-- Test html file which uses Bootstap flexbox grids -->
+
+{% extends "home.html" %}
+
+{% block custom_css %}
+    <link href="{{ url_for('portfolio.static', filename='css/styles.css') }}" rel="stylesheet">
+{% endblock custom_css %}
+
+{% block content %}
+    <!-- Main Content Area -->
+    <main class="content flex-grow-1 p-4">
+        <div class="container">
+            <h1 class="mb-4">Portfolio Overview</h1>
+            
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <!-- PnL Chart -->
+                    <div class="card dashboard-card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Profit and Loss Chart</h5>
+                            <canvas id="pnlChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <!-- Total Assets Across All Portfolios -->
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Assets</h5>
+                            <h2 class="card-text text-primary">$1,250,000</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-4">
+                    <!-- Total Assets Across All Portfolios -->
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Assets</h5>
+                            <h2 class="card-text text-primary">$1,250,000</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+    
+            <!-- Net Asset Value of Each Portfolio -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Portfolio A</h5>
+                            <p class="card-text">Net Asset Value: $500,000</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Portfolio B</h5>
+                            <p class="card-text">Net Asset Value: $750,000</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+{% endblock content %}
+
+{% block custom_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    // Initialize PnL Chart
+    const ctx = document.getElementById('pnlChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Profit/Loss',
+            data: [12, 19, 3, 5, 2, 3],
+            borderColor: '#4a90e2',
+            tension: 0.1
+        }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+            beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+            display: false
+            }
+        }
+        }
+    });
+    </script>
+{% endblock custom_js %}
