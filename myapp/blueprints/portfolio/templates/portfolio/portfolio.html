@@ -1,7 +1,7 @@
 {% extends "home.html" %}
 
 {% block custom_css %}
-    <link rel="stylesheet" href="{{url_for('portfolio.static', filename='css/portfolio.css')}}">
+    <link rel="stylesheet" href="{{url_for('portfolio.static', filename='css/portfolio_menu.css')}}">
 {% endblock custom_css %}
 
 {% block content %}
@@ -12,33 +12,27 @@
             <div class="search-filter">
                 <div class="search-container">
                     <span class="search-icon">🔍</span>
-                    <input type="text" placeholder="Search portfolios...">
+                    <input type="text" id="search-input" placeholder="Search portfolios...">
                 </div>
-                <select>
+                <select id="filter-select">
                     <option value="all">All Types</option>
-                    <option value="Stocks">Stocks</option>
-                    <option value="Bonds">Bonds</option>
-                    <option value="Mixed">Mixed</option>
-                    <option value="REITs">REITs</option>
+                    {% for type in portfolio_types.values() %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
                 </select>
                 <button class="suggested-portfolios">✨ Suggested Portfolios</button>
             </div>
 
-           <div class="portfolio-grid">
+            <div id="portfolio-grid" class="portfolio-grid">
                 {% for portfolio in portfolios %}
                 <div class="portfolio-card">
                     <div class="portfolio-card-header">
                         <h2 class="portfolio-name">{{ portfolio.name }}</h2>
                     </div>
                     <div class="portfolio-card-content">
-                        <div class="portfolio-card-text">
-                            <p class="portfolio-type">Type: {{ portfolio.type }}</p>
-                            <p class="portfolio-value">{{ portfolio.value }}</p>
-                            <p class="portfolio-performance {% if portfolio.performance.startswith('+') %}performance-positive{% else %}performance-negative{% endif %}">
-                                {{ portfolio.performance }}
-                            </p>
-                        </div>
-                        <img src="{{ portfolio.image_url }}" alt="{{ portfolio.name }}" class="portfolio-card-image">
+                        <p class="portfolio-type">{% for type in portfolio.type %} {{portfolio_types[type]}} {% endfor %}</p>
+                        <p class="portfolio-description">{{ portfolio["short description"] }}</p>
+                        <img src="static/images/{{ portfolio.image_url }}"+ alt="{{ portfolio.name }}" class="portfolio-card-image">
                     </div>
                     <div class="portfolio-card-footer">
                         <button>View Details</button>
@@ -49,4 +43,62 @@
         </div>
     </main>
 {% endblock content %}
+
+{% block custom_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+
+            const portfolios = {{ portfolios|tojson|safe }};
+            const portfolio_types = {{portfolio_types|tojson|safe}}
+        
+            const searchInput = document.getElementById('search-input');
+            const filterSelect = document.getElementById('filter-select');
+            const portfolioGrid = document.getElementById('portfolio-grid');
+
+            function filterPortfolios() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filterType = filterSelect.value;
+
+                portfolioGrid.innerHTML = '';
+
+                portfolios.forEach(portfolio => {
+                    if ((filterType === 'all' ||
+                        portfolio.type.some(type => portfolio_types[type] === filterType)) &&
+                        portfolio.name.toLowerCase().includes(searchTerm)) {
+                        const card = createPortfolioCard(portfolio, portfolio_types);
+                        portfolioGrid.appendChild(card);
+                    }
+                });
+            }
+
+            function createPortfolioCard(portfolio, portfolio_types) {
+                const card = document.createElement('div');
+                card.className = 'portfolio-card';
+
+                card.innerHTML = `
+                    <div class="portfolio-card-header">
+                        <h2 class="portfolio-name">${portfolio.name}</h2>
+                    </div>
+                    <div class="portfolio-card-content">
+                        <p class="portfolio-type">${ portfolio.type.map(type => portfolio_types[type]).join(", ") }</p>
+                        <p class="portfolio-description">${ portfolio["short description"] }</p>
+                        <img src="static/images/${portfolio.image_url}" alt="${portfolio.name}" class="portfolio-card-image">
+                    </div>
+                    <div class="portfolio-card-footer">
+                        <button>View Details</button>
+                    </div>
+                `;
+
+                return card;
+            }
+            
+            searchInput.addEventListener('input', filterPortfolios);
+            filterSelect.addEventListener('change', filterPortfolios);
+
+            // Initial filter
+            filterPortfolios();
+
+        })
+    </script>
+{% endblock custom_js %}
 

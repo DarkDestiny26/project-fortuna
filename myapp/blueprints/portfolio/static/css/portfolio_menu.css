@@ -53,6 +53,9 @@ button:hover {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 .portfolio-card-header {
     background-color: #f8f9fa;
@@ -62,23 +65,25 @@ button:hover {
 .portfolio-card-content {
     padding: 1rem;
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.portfolio-card-text {
-    flex: 1;
-}
 .portfolio-card-footer {
     padding: 1rem;
     background-color: #f8f9fa;
     border-top: 1px solid #e9ecef;
 }
 .portfolio-card-image {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     border-radius: 4px;
-    margin-left: 1rem;
+    margin-top: auto;
+    flex-shrink: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 .portfolio-name {
     font-size: 1.25rem;
@@ -89,20 +94,12 @@ button:hover {
     color: #6c757d;
     font-size: 0.875rem;
 }
-.portfolio-value {
-    font-size: 1.125rem;
-    font-weight: bold;
-    margin: 0.5rem 0;
-}
-.portfolio-performance {
+.portfolio-description {
     font-size: 0.875rem;
+    color: #333;
+    margin-top: 0.5rem;
 }
-.performance-positive {
-    color: #28a745;
-}
-.performance-negative {
-    color: #dc3545;
-}
+
 .suggested-portfolios {
     color: black;
     background-color: #f8f9fa;
