@@ -5,7 +5,6 @@ import json
 from myapp.blueprints.portfolio.models import Portfolio
 from myapp.app import db
 
-
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
 
 # Portfolio types
@@ -31,4 +30,12 @@ def index1():
     # Convert objects to dictionaries
     portfolios_dict = [portfolio.to_dict() for portfolio in portfolios]
 
-    return render_template('portfolio/modal.html', portfolios=portfolios_dict, portfolio_types=portfolio_types)
+    return render_template('portfolio/portfolio3.html', portfolios=portfolios_dict, portfolio_types=portfolio_types)
+
+
+@portfolio.route('/invest', methods=['POST'])
+@login_required
+def invest():
+    if request.method == 'POST':
+        portfolio = request.form.get('portfolio')
+        return render_template('portfolio/invest.html', portfolio=eval(portfolio))

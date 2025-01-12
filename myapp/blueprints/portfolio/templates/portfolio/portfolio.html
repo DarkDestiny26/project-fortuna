@@ -2,7 +2,6 @@
 
 {% block custom_css %}
     <link rel="stylesheet" href="{{url_for('portfolio.static', filename='css/portfolio_menu.css')}}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock custom_css %}
 
 {% block content %}
@@ -42,7 +41,10 @@
                         <p id="modalDescription" class="modal-description"></p>
                     </div>
                     <div class="modal-footer">
-                         <button class="invest-button">Invest Now</button>
+                        <form action="{{ url_for('portfolio.invest') }}" method="post">
+                            <input type="hidden" name="portfolio" value="">
+                            <button class="invest-button" type="submit">Invest Now</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -113,13 +115,13 @@
             // Update modal content dynamically
              $(document).ready(function () {
                 $('.open-modal').on('click', function () {
-                    
+
                     const portfolio = $(this).data('portfolio');
 
-                    // Update modal 
                     $('#modalImage').attr("src", "static/images/"+portfolio.image_url);
                     $('#modalTitle').text(portfolio.name);
                     $('#modalDescription').text(portfolio.long_description);
+                    $('form input[name="portfolio"]').attr("value", JSON.stringify(portfolio));
 
                     // Formats allocations into string with the following format:
                     // Asset 1: 40%

@@ -1,0 +1,242 @@
+{% extends "home.html" %}
+
+{% block custom_css %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="{{url_for('portfolio.static', filename='css/invest.css')}}" rel="stylesheet" >
+{% endblock custom_css %}
+
+{% block content %}
+    <main class="content flex-grow-1 p-4">
+        <div class="container">
+            <h1>{{portfolio.name}}</h1>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-label">Daily Performance</div>
+                                <div class="stats-value text-success" id="dailyChange">+2.3%</div>
+                                <div class="badge badge-success">
+                                    <i class="fas fa-chart-line me-1"></i>Today
+                                </div>
+                            </div>
+                            <div class="icon primary">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-label">Risk Level</div>
+                                <div class="stats-value">Moderate</div>
+                                <div class="risk-meter">
+                                    <div class="risk-level risk-medium" style="width: 65%;"></div>
+                                </div>
+                                <div class="badge badge-success">
+                                    <i class="fas fa-shield-alt me-1"></i>Balanced
+                                </div>
+                            </div>
+                            <div class="icon primary">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stats-card">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="stats-label">Portfolio Features</div>
+                                <ul class="feature-list mt-2">
+                                    <li><i class="fas fa-globe"></i>Global Diversification</li>
+                                    <li><i class="fas fa-sync"></i>Auto Rebalancing</li>
+                                    <li><i class="fas fa-shield-alt"></i>Risk Management</li>
+                                </ul>
+                            </div>
+                            <div class="icon primary">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portfolio Summary -->
+            
+
+            <div class="row g-4 mb-4">
+                <!-- Asset Allocation Chart -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">Asset Allocation</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="pieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purchase Interface -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title">Purchase Portfolio Units</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="unitsInput" class="form-label stats-label">Number of Units</label>
+                                <input type="number" class="form-control" id="unitsInput" min="1" value="1">
+                            </div>
+                            <div class="mb-4">
+                                <div class="stats-label">Total Cost</div>
+                                <div class="stats-value" id="totalCost">$125,000</div>
+                            </div>
+                            <button class="btn btn-primary w-100" id="purchaseBtn">Purchase Portfolio</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assets Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Portfolio Assets</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="assetsTable">
+                            <thead>
+                                <tr>
+                                    <th>Asset</th>
+                                    <th class="text-end">Price</th>
+                                    <th class="text-end">Units</th>
+                                    <th class="text-end">Value</th>
+                                    <th class="text-end">Allocation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated by jQuery -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock content %}
+
+{% block custom_js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        // Sample portfolio data
+        const portfolio = {
+            totalValue: 125000,
+            dailyChange: 2.3,
+            assets: [
+                { id: 1, name: 'AAPL', price: 180.5, units: 50, value: 9025, allocation: 7.22 },
+                { id: 2, name: 'GOOGL', price: 2850.2, units: 15, value: 42753, allocation: 34.20 },
+                { id: 3, name: 'MSFT', price: 378.9, units: 100, value: 37890, allocation: 30.31 },
+                { id: 4, name: 'AMZN', price: 145.2, units: 200, value: 29040, allocation: 23.23 },
+                { id: 5, name: 'TSLA', price: 210.8, units: 30, value: 6324, allocation: 5.04 }
+            ]
+        };
+
+        // Format currency
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value);
+        };
+
+        // Populate assets table
+        function populateTable() {
+            const tbody = $('#assetsTable tbody');
+            tbody.empty();
+            
+            portfolio.assets.forEach(asset => {
+                tbody.append(`
+                    <tr class="asset-row" data-asset-id="${asset.id}">
+                        <td>${asset.name}</td>
+                        <td class="text-end">${formatCurrency(asset.price)}</td>
+                        <td class="text-end">${asset.units}</td>
+                        <td class="text-end">${formatCurrency(asset.value)}</td>
+                        <td class="text-end">${asset.allocation.toFixed(2)}%</td>
+                    </tr>
+                `);
+            });
+        }
+
+        // Initialize pie chart
+        function initializePieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: portfolio.assets.map(asset => asset.name),
+                    datasets: [{
+                        data: portfolio.assets.map(asset => asset.allocation),
+                        backgroundColor: [
+                            '#6366f1',
+                            '#22c55e',
+                            '#eab308',
+                            '#ef4444',
+                            '#8b5cf6'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 12
+                                },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize everything when document is ready
+        $(document).ready(function() {
+
+            // Handle purchase units input
+            $('#unitsInput').on('input', function() {
+                const units = Math.max(1, parseInt($(this).val()) || 1);
+                const totalCost = portfolio.totalValue * units;
+                $('#totalCost').text(formatCurrency(totalCost));
+            });
+
+            // Handle purchase button click
+            $('#purchaseBtn').on('click', function() {
+                const units = parseInt($('#unitsInput').val());
+                const totalCost = portfolio.totalValue * units;
+                alert(`Purchase confirmed!\nUnits: ${units}\nTotal Cost: ${formatCurrency(totalCost)}`);
+            });
+
+            // Handle asset row click
+            $(document).on('click', '.asset-row', function() {
+                const assetId = $(this).data('asset-id');
+                const asset = portfolio.assets.find(a => a.id === assetId);
+                alert(`Selected Asset: ${asset.name}\nCurrent Price: ${formatCurrency(asset.price)}`);
+            });
+
+            populateTable();
+            initializePieChart();
+        });
+
+    </script>
+{% endblock custom_js %}
