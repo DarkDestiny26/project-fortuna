@@ -32,6 +32,17 @@ def index1():
 
     return render_template('portfolio/portfolio3.html', portfolios=portfolios_dict, portfolio_types=portfolio_types)
 
+@portfolio.route('/test2')
+@login_required
+def index2():
+    # Query all portfolios
+    portfolios = Portfolio.query.all()
+
+    # Convert objects to dictionaries
+    portfolios_dict = [portfolio.to_dict() for portfolio in portfolios]
+
+    return render_template('portfolio/portfolio2.html', portfolios=portfolios_dict, portfolio_types=portfolio_types)
+
 
 @portfolio.route('/invest', methods=['POST'])
 @login_required
