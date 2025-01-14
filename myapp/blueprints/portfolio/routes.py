@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, Blueprint, jsonif
 from flask_login import login_user, logout_user, current_user, login_required
 import json
 
-from myapp.blueprints.portfolio.models import Portfolio
+from myapp.blueprints.portfolio.models import Portfolio, Portfolio2
 from myapp.app import db
 
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
@@ -36,7 +36,7 @@ def index1():
 @login_required
 def index2():
     # Query all portfolios
-    portfolios = Portfolio.query.all()
+    portfolios = Portfolio2.query.all()
 
     # Convert objects to dictionaries
     portfolios_dict = [portfolio.to_dict() for portfolio in portfolios]

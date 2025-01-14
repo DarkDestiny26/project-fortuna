@@ -1,4 +1,5 @@
 from myapp.app import db
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 
 # Define the Portfolios table
 class Portfolio(db.Model):
@@ -23,6 +24,31 @@ class Portfolio(db.Model):
             "long_description": self.long_description,
             "image_url": self.image_url,
             "allocation": self.allocation,
+        }
+    
+# Define the Portfolios table
+class Portfolio2(db.Model):
+    __tablename__ = 'portfolios2'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    labels = db.Column(ARRAY(JSONB), nullable=True) # Array of JSON to store labels
+    short_description = db.Column(db.Text, nullable=True)
+    long_description = db.Column(db.Text, nullable=True)
+    allocation = db.Column(ARRAY(JSONB), nullable=True)  # Array of JSON to store allocation details
+    returns = db.Column(db.JSON, nullable=True) # JSON to store returns
+
+    def __repr__(self):
+        return f"<Portfolio {self.name}>"
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "labels": self.labels,
+            "short_description": self.short_description,
+            "long_description": self.long_description,
+            "allocation": self.allocation,
+            "returns": self.returns,
         }
 
 
