@@ -1,0 +1,89 @@
+{% extends "home.html" %}
+
+{% block custom_css %}
+    <link rel="stylesheet" href="{{url_for('portfolio.static', filename='css/portfolio_menu_2.css')}}">
+{% endblock custom_css %}
+
+{% block content %}
+    <main class="content flex-grow-1 p-4">
+        <div class="container-fluid">
+            <h1>Select a Portfolio</h1>
+        
+            <div class="search-filter">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search portfolios...">
+                </div>
+                <select id="filter-select">
+                    <option value="all">All Types</option>
+                    {% for type in ["High Risk", "Medium Risk", "Low Risk"] %}
+                    <option value="{{ type }}">{{ type }}</option>
+                    {% endfor %}
+                </select>
+                <button class="suggested-portfolios">✨ Suggested Portfolios</button>
+            </div>
+            
+            <div class="portfolio-container" id="portfolio-container">
+                <!-- Cards will be dynamically inserted here -->
+            </div>
+        </div>
+         
+         <!-- Portfolio Modal -->
+        <div class="modal fade" id="portfolioModal" tabindex="-1" aria-labelledby="portfolioModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h2 class="modal-title" id="modalTitle">Growth Portfolio</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="portfolio-description lead" id="modalDescription">A high-risk, high-reward portfolio focused on emerging technologies and growth stocks.</p>
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Allocation</h3>
+                                        <div class="allocation-chart-container">
+                                            <canvas id="allocationChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Returns</h3>
+                                        <div id="returnsInfo" class="returns-info">
+                                            <div class="return-item">
+                                                <div class="return-value" id="oneYearReturn"></div>
+                                                <div class="return-label">1 Year Return</div>
+                                            </div>
+                                            <div class="return-item">
+                                                <div class="return-value" id="threeYearReturn"></div>
+                                                <div class="return-label">3 Year Return</div>
+                                            </div>
+                                            <div class="return-item">
+                                                <div class="return-value" id="fiveYearReturn"></div>
+                                                <div class="return-label">5 Year Return</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+{% endblock content %}
+
+{% block custom_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script> 
+        const portfolios = {{ portfolios|tojson|safe }}
+    </script>
+    <script src="{{url_for('portfolio.static', filename='js/portfolio2.js')}}"></script>
+{% endblock custom_js %}
+

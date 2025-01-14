@@ -1,36 +1,4 @@
 $(document).ready(function() {
-    const portfolios = [
-        {
-            name: "Growth Portfolio",
-            type: "High Risk",
-            description: "Aggressive growth strategy focused on emerging markets and tech sectors",
-            return: "12.5%",
-            allocation: [
-                { name: "Technology", value: 40 },
-                { name: "Healthcare", value: 25 },
-                { name: "Consumer Discretionary", value: 20 },
-                { name: "Financials", value: 10 },
-                { name: "Others", value: 5 },
-            ],
-            returns: {
-                oneYear: 15.7,
-                threeYear: 42.3,
-                fiveYear: 76.9
-            }
-        },
-        {
-            name: "Balanced Fund",
-            type: "Medium Risk",
-            description: "Diversified mix of stocks and bonds for steady growth",
-            return: "8.2%"
-        },
-        {
-            name: "Conservative Income",
-            type: "Low Risk",
-            description: "Focus on stable dividend-paying stocks and government bonds",
-            return: "5.7%"
-        }
-    ];
 
     function renderPortfolios() {
         const container = $('#portfolio-container');
@@ -41,7 +9,20 @@ $(document).ready(function() {
             return `risk-${risk}`;
         };
 
+        const renderLabels = (labels) => {
+            return labels.map(label => {
+                const className = label.type === 'risk' 
+                    ? `portfolio-type ${getRiskClass(label.text)}` 
+                    : 'label';
+                return `<span class="${className}">${label.text}</span>`;
+            }).join('');
+        };
+
         portfolios.forEach(portfolio => {
+
+            // Create id for 'View details' button so that we can refer to it later
+            const button_id = portfolio.name.replace(/\s+/g, '-');
+
             const card = `
                 <div class="portfolio-card">
                     <div class="card-header">
@@ -50,22 +31,28 @@ $(document).ready(function() {
                     
                     <div class="card-body">
                         <div class="portfolio-stats">
-                            <span class="portfolio-type ${getRiskClass(portfolio.type)}">${portfolio.type}</span>
+                            <div class="labels-container">
+                                ${renderLabels(portfolio.labels)}
+                            </div>
                             <div class="return-info">
-                                <div class="return-value">${portfolio.return}</div>
+                                <div class="return-value">${portfolio.returns.oneYear}%</div>
                                 <div class="return-label">Annual Return</div>
                             </div>
                         </div>
-                        <p class="portfolio-description">${portfolio.description}</p>
+                        <p class="portfolio-description">${portfolio.short_description}</p>
                     </div>
                     
                     <div class="card-footer">
-                        <button id="viewPortfolioBtn" class="btn btn-outline-primary">View Details</button>
+                        <button id=${button_id} class="btn btn-outline-primary open-modal" data-bs-toggle="modal" data-bs-target="#portfolioModal">View Details</button>
                         <button class="btn btn-primary">Invest Now</button>
                     </div>
                 </div>
             `;
+
             container.append(card);
+
+            // Add portfolio data to the button so that we can pass the data to our modal later
+            $('#'+button_id).data('portfolio', portfolio);
         });
     }
 
@@ -87,26 +74,30 @@ $(document).ready(function() {
         });
     });
 
-     // Open modal on button click
-    $("#viewPortfolioBtn").click(function() {
-        $("#portfolioModal").modal("show");
-    });
+    // Update modal content dynamically
+    $('.open-modal').on('click', function () {
 
-    // Create chart and populate returns when modal is shown
-    $("#portfolioModal").on("shown.bs.modal", function() {
-        createAllocationChart(portfolios[0]);
-        populateReturns(portfolios[0]);
-    });
+        const portfolio = $(this).data('portfolio');
 
-    // Handle time period button clicks
-    $(".btn-group .btn").click(function() {
-        $(".btn-group .btn").removeClass("active");
-        $(this).addClass("active");
-        updateReturnsChart(portfolios[0], $(this).data("period"));
+        $('#modalTitle').text(portfolio.name);
+        $('#modalDescription').text(portfolio.long_description);
+        $("#oneYearReturn").text(portfolio.returns.oneYear.toFixed(1) + "%");
+        $("#threeYearReturn").text(portfolio.returns.threeYear.toFixed(1) + "%");
+        $("#fiveYearReturn").text(portfolio.returns.fiveYear.toFixed(1) + "%");
+
+        // Create chart and populate returns when modal is shown
+        createAllocationChart(portfolio);
+        
     });
 
     function createAllocationChart(portfolio) {
-        const ctx = document.getElementById("allocationChart").getContext("2d");
+        let chartStatus = Chart.getChart("allocationChart");
+
+        if(chartStatus != undefined){
+            chartStatus.destroy();
+        }
+
+        const ctx = document.getElementById('allocationChart').getContext("2d");
         new Chart(ctx, {
             type: "doughnut",
             data: {
@@ -144,9 +135,4 @@ $(document).ready(function() {
         });
     }
 
-    function populateReturns(portfolio) {
-        $("#oneYearReturn").text(portfolio.returns.oneYear.toFixed(1) + "%");
-        $("#threeYearReturn").text(portfolio.returns.threeYear.toFixed(1) + "%");
-        $("#fiveYearReturn").text(portfolio.returns.fiveYear.toFixed(1) + "%");
-    }
 });
