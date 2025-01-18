@@ -8,7 +8,7 @@ from myapp.app import db
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
 
 # Portfolio types
-portfolio_types = {0:"Endowment", 1:"Factor based", 2:"Includes cash", 3:"Risk parity", 4:"Traditional"}
+portfolio_types = ["High Risk", "Medium Risk", "Low Risk", "Endowment", "Factor based", "Includes cash", "Risk parity", "Traditional"]
 
 @portfolio.route('/')
 @login_required

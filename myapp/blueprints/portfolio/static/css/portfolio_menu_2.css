@@ -136,6 +136,23 @@ button:hover {
     line-height: 1.6;
     padding-right: 2rem; /* Add padding to prevent overlap */
     max-width: 70%; /* Limit width to prevent overlap with return value */
+    padding-left: 0;
+    list-style-type: none;
+
+    li {
+        margin-bottom: 0.75rem;
+        position: relative;
+        padding-left: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    li::before {
+        content: "•";
+        font-weight: bold;
+        display: inline-block;
+        position: absolute;
+        left: 0.5rem;
+    }
 }
 
 .portfolio-stats {

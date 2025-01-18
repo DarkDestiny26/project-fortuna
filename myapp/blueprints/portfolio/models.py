@@ -33,7 +33,7 @@ class Portfolio2(db.Model):
     name = db.Column(db.String(100), nullable=False)
     labels = db.Column(ARRAY(JSONB), nullable=True) # Array of JSON to store labels
     short_description = db.Column(db.Text, nullable=True)
-    long_description = db.Column(db.Text, nullable=True)
+    long_description = db.Column(db.ARRAY(db.String), nullable=True) # Array of strings, 1 element = 1 sentence
     allocation = db.Column(ARRAY(JSONB), nullable=True)  # Array of JSON to store allocation details
     returns = db.Column(db.JSON, nullable=True) # JSON to store returns
 

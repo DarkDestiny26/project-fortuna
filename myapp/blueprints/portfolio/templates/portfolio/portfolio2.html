@@ -16,7 +16,7 @@
                 </div>
                 <select id="filter-select">
                     <option value="all">All Types</option>
-                    {% for type in ["High Risk", "Medium Risk", "Low Risk"] %}
+                    {% for type in portfolio_types %}
                     <option value="{{ type }}">{{ type }}</option>
                     {% endfor %}
                 </select>
@@ -37,7 +37,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p class="portfolio-description lead" id="modalDescription">A high-risk, high-reward portfolio focused on emerging technologies and growth stocks.</p>
+                        <ul class="portfolio-description" id="modalDescription">
+                        </ul>
                         <div class="row g-4">
                             <div class="col-12">
                                 <div class="card">

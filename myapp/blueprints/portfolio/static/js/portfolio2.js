@@ -69,8 +69,12 @@ $(document).ready(function() {
     $('select').on('change', function() {
         const filterValue = $(this).val().toLowerCase();
         $('.portfolio-card').each(function() {
-            const type = $(this).find('.portfolio-type').text().toLowerCase();
-            $(this).toggle(!filterValue || type.includes(filterValue));
+            const type = $(this).find('.labels-container span').map(function() {
+                return $(this).text().toLowerCase();
+            }).get();
+        
+            //const type = $(this).find('.portfolio-type').text().toLowerCase();
+            $(this).toggle(filterValue === 'all' || type.includes(filterValue));
         });
     });
 
@@ -80,10 +84,16 @@ $(document).ready(function() {
         const portfolio = $(this).data('portfolio');
 
         $('#modalTitle').text(portfolio.name);
-        $('#modalDescription').text(portfolio.long_description);
         $("#oneYearReturn").text(portfolio.returns.oneYear.toFixed(1) + "%");
         $("#threeYearReturn").text(portfolio.returns.threeYear.toFixed(1) + "%");
         $("#fiveYearReturn").text(portfolio.returns.fiveYear.toFixed(1) + "%");
+
+        // Clear list before appending new elements to list
+        $('#modalDescription').empty();
+        
+        portfolio.long_description.forEach((item)=>
+            $('#modalDescription').append(`<li>${item}</li>`)
+        );
 
         // Create chart and populate returns when modal is shown
         createAllocationChart(portfolio);
@@ -105,8 +115,10 @@ $(document).ready(function() {
                 datasets: [{
                     data: portfolio.allocation.map(item => item.value),
                     backgroundColor: [
-                        "#4361ee", "#3a0ca3", "#7209b7", "#f72585", "#4cc9f0"
+                        "#3a0ca3", "#f72585", "#4361ee", "#9d5ee6", "#715EE6", "#5EA2E6", "#C95EE6", "#B3ABE6"
+                        //"#4361ee", "#3a0ca3", "#7209b7", "#f72585", "#4cc9f0"
                     ],
+                    
                 }]
             },
             options: {
