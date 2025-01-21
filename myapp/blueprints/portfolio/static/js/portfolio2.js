@@ -20,8 +20,13 @@ $(document).ready(function() {
 
         portfolios.forEach(portfolio => {
 
+            const id = portfolio.name.replace(/\s+/g, '-');
+
             // Create id for 'View details' button so that we can refer to it later
-            const button_id = portfolio.name.replace(/\s+/g, '-');
+            const view_details_id = id + "-details";
+
+            // Create id for 'Invest now' button so that we can refer to it later
+            const invest_now_id = id + "-invest";
 
             const card = `
                 <div class="portfolio-card">
@@ -43,16 +48,23 @@ $(document).ready(function() {
                     </div>
                     
                     <div class="card-footer">
-                        <button id=${button_id} class="btn btn-outline-primary open-modal" data-bs-toggle="modal" data-bs-target="#portfolioModal">View Details</button>
-                        <button class="btn btn-primary">Invest Now</button>
+                        <button id=${view_details_id} class="btn btn-outline-primary open-modal" data-bs-toggle="modal" data-bs-target="#portfolioModal">View Details</button>
+                        <form action="/home/portfolio/invest" method="post">
+                            <input id=${invest_now_id} type="hidden" name="portfolio" value="">
+                            <button class="btn btn-primary" type="submit">Invest Now</button>
+                        </form>
                     </div>
                 </div>
             `;
 
             container.append(card);
 
-            // Add portfolio data to the button so that we can pass the data to our modal later
-            $('#'+button_id).data('portfolio', portfolio);
+            // Add portfolio data to 'view details' button so that we can pass the data to our modal later
+            $('#'+view_details_id).data('portfolio', portfolio);
+
+            // Add portfolio data to 'invest now' input so that we can pass the data to /invest route
+            $('#'+invest_now_id).val(JSON.stringify(portfolio));
+
         });
     }
 
@@ -78,7 +90,7 @@ $(document).ready(function() {
         });
     });
 
-    // Update modal content dynamically
+    // Update modal card content dynamically
     $('.open-modal').on('click', function () {
 
         const portfolio = $(this).data('portfolio');
