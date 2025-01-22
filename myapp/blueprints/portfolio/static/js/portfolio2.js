@@ -18,7 +18,8 @@ $(document).ready(function() {
             }).join('');
         };
 
-        portfolios.forEach(portfolio => {
+        // Display portfolios in ascending order of 'id'
+        portfolios.sort((a, b) => a.id - b.id).forEach(portfolio => {
 
             const id = portfolio.name.replace(/\s+/g, '-');
 
