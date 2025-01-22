@@ -54,6 +54,7 @@ body {
 /* Align content to the right of sidebar */
 .content {
     margin-left: 250px;
+    min-width: 0;
 }
 
 /* Adjust logo position for larger screens */
@@ -65,9 +66,6 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    body {
-        padding-top: 60px;
-    }
 
     .site-header {
         padding: 5px 0;
@@ -75,6 +73,17 @@ body {
 
     .logo {
         max-height: 50px;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        display: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 1rem;
     }
 }
 
