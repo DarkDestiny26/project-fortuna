@@ -46,29 +46,27 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card stats-card">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="stats-label">Portfolio Features</div>
-                                <ul class="feature-list mt-2">
-                                    <li><i class="fas fa-globe"></i>Global Diversification</li>
-                                    <li><i class="fas fa-sync"></i>Auto Rebalancing</li>
-                                    <li><i class="fas fa-shield-alt"></i>Risk Management</li>
-                                </ul>
-                            </div>
-                            <div class="icon primary">
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <!-- Portfolio Summary -->
-            
-
             <div class="row g-4 mb-4">
+                <!-- Portfolio Returns Chart -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Portfolio Returns</h5>
+                            <div class="btn-group" role="group" aria-label="Time period">
+                                <button type="button" class="btn btn-outline-primary period-btn active" data-period="6m">6M</button>
+                                <button type="button" class="btn btn-outline-primary period-btn" data-period="1y">1Y</button>
+                                <button type="button" class="btn btn-outline-primary period-btn" data-period="5y">5Y</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="returnsChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Asset Allocation Chart -->
                 <div class="col-md-6">
                     <div class="card h-100">
@@ -80,9 +78,38 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                 <!-- Assets Table -->
+                <div class="col-md-9">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Portfolio Assets</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table" id="assetsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th class="text-end">Price</th>
+                                            <th class="text-end">Units</th>
+                                            <th class="text-end">Value</th>
+                                            <th class="text-end">Allocation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Table rows will be populated by jQuery -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Purchase Interface -->
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <div class="card h-100">
                         <div class="card-header">
                             <h5 class="card-title">Purchase Portfolio Units</h5>
@@ -96,33 +123,10 @@
                                 <div class="stats-label">Total Cost</div>
                                 <div class="stats-value" id="totalCost">$125,000</div>
                             </div>
+                        </div>
+                        <div class="card-footer">
                             <button class="btn btn-primary w-100" id="purchaseBtn">Purchase Portfolio</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Assets Table -->
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Portfolio Assets</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table" id="assetsTable">
-                            <thead>
-                                <tr>
-                                    <th>Asset</th>
-                                    <th class="text-end">Price</th>
-                                    <th class="text-end">Units</th>
-                                    <th class="text-end">Value</th>
-                                    <th class="text-end">Allocation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Table rows will be populated by jQuery -->
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -134,86 +138,177 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
-        // Sample portfolio data
-        const portfolio = {
-            totalValue: 125000,
-            dailyChange: 2.3,
-            assets: [
-                { id: 1, name: 'AAPL', price: 180.5, units: 50, value: 9025, allocation: 7.22 },
-                { id: 2, name: 'GOOGL', price: 2850.2, units: 15, value: 42753, allocation: 34.20 },
-                { id: 3, name: 'MSFT', price: 378.9, units: 100, value: 37890, allocation: 30.31 },
-                { id: 4, name: 'AMZN', price: 145.2, units: 200, value: 29040, allocation: 23.23 },
-                { id: 5, name: 'TSLA', price: 210.8, units: 30, value: 6324, allocation: 5.04 }
-            ]
-        };
-
-        const test = {{ portfolio }};
-
-        // Format currency
-        const formatCurrency = (value) => {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-            }).format(value);
-        };
-
-        // Populate assets table
-        function populateTable() {
-            const tbody = $('#assetsTable tbody');
-            tbody.empty();
-            
-            portfolio.assets.forEach(asset => {
-                tbody.append(`
-                    <tr class="asset-row" data-asset-id="${asset.id}">
-                        <td>${asset.name}</td>
-                        <td class="text-end">${formatCurrency(asset.price)}</td>
-                        <td class="text-end">${asset.units}</td>
-                        <td class="text-end">${formatCurrency(asset.value)}</td>
-                        <td class="text-end">${asset.allocation.toFixed(2)}%</td>
-                    </tr>
-                `);
-            });
-        }
-
-        // Initialize pie chart
-        function initializePieChart() {
-            const ctx = document.getElementById('pieChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: portfolio.assets.map(asset => asset.name),
-                    datasets: [{
-                        data: portfolio.assets.map(asset => asset.allocation),
-                        backgroundColor: [
-                            '#6366f1',
-                            '#22c55e',
-                            '#eab308',
-                            '#ef4444',
-                            '#8b5cf6'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                font: {
-                                    family: "'Inter', sans-serif",
-                                    size: 12
-                                },
-                                padding: 20
-                            }
-                        }
-                    }
-                }
-            });
-        }
 
         // Initialize everything when document is ready
         $(document).ready(function() {
+
+            // Sample portfolio data
+            const portfolio = {
+                totalValue: 125000,
+                dailyChange: 2.3,
+                assets: [
+                    { id: 1, name: 'AAPL', price: 180.5, units: 50, value: 9025, allocation: 7.22 },
+                    { id: 2, name: 'GOOGL', price: 2850.2, units: 15, value: 42753, allocation: 34.20 },
+                    { id: 3, name: 'MSFT', price: 378.9, units: 100, value: 37890, allocation: 30.31 },
+                    { id: 4, name: 'AMZN', price: 145.2, units: 200, value: 29040, allocation: 23.23 },
+                    { id: 5, name: 'TSLA', price: 210.8, units: 30, value: 6324, allocation: 5.04 }
+                ]
+            };
+
+            const returnsData = {
+                '6m': {
+                    labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    returns: [2.4, 3.1, -1.2, 4.5, 2.8, 3.2]
+                },
+                '1y': {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    returns: [1.8, 2.2, -0.8, 3.1, 2.4, 1.9, 2.4, 3.1, -1.2, 4.5, 2.8, 3.2]
+                },
+                '5y': {
+                    labels: ['2020', '2021', '2022', '2023', '2024'],
+                    returns: [12.5, 15.8, -8.3, 22.4, 18.2]
+                }
+            };
+
+            // Format currency
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(value);
+            };
+
+            // Populate assets table
+            function populateTable() {
+                const tbody = $('#assetsTable tbody');
+                tbody.empty();
+                
+                portfolio.assets.forEach(asset => {
+                    tbody.append(`
+                        <tr class="asset-row" data-asset-id="${asset.id}">
+                            <td>${asset.name}</td>
+                            <td class="text-end">${formatCurrency(asset.price)}</td>
+                            <td class="text-end">${asset.units}</td>
+                            <td class="text-end">${formatCurrency(asset.value)}</td>
+                            <td class="text-end">${asset.allocation.toFixed(2)}%</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Initialize pie chart
+            function initializePieChart() {
+                const ctx = document.getElementById('pieChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: portfolio.assets.map(asset => asset.name),
+                        datasets: [{
+                            data: portfolio.assets.map(asset => asset.allocation),
+                            backgroundColor: [
+                                '#6366f1',
+                                '#22c55e',
+                                '#eab308',
+                                '#ef4444',
+                                '#8b5cf6'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        family: "'Inter', sans-serif",
+                                        size: 12
+                                    },
+                                    padding: 20
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            let returnsChart;
+
+            function initializeReturnsChart(period = '6m') {
+                const ctx = document.getElementById('returnsChart').getContext('2d');
+                
+                // Destroy existing chart if it exists
+                if (returnsChart) {
+                    returnsChart.destroy();
+                }
+
+                // Calculate cumulative returns
+                const data = returnsData[period];
+                let cumulativeReturns = [];
+                let sum = 0;
+                data.returns.forEach(ret => {
+                    sum += ret;
+                    cumulativeReturns.push(sum);
+                });
+
+                returnsChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Cumulative Return %',
+                            data: cumulativeReturns,
+                            borderColor: '#6366f1',
+                            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#6366f1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Return: ${context.raw.toFixed(2)}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                }
+                            },
+                            y: {
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toFixed(1) + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Handle period button clicks
+            $('.period-btn').on('click', function() {
+                $('.period-btn').removeClass('active');
+                $(this).addClass('active');
+                initializeReturnsChart($(this).data('period'));
+            });
 
             // Handle purchase units input
             $('#unitsInput').on('input', function() {
@@ -236,8 +331,10 @@
                 alert(`Selected Asset: ${asset.name}\nCurrent Price: ${formatCurrency(asset.price)}`);
             });
 
+            // Initialise table and charts
             populateTable();
             initializePieChart();
+            initializeReturnsChart('6m');
         });
 
     </script>
