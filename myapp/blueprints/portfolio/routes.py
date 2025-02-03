@@ -48,8 +48,12 @@ def index2():
 @login_required
 def invest():
     if request.method == 'POST':
-        portfolio = request.form.get('portfolio')
-        return render_template('portfolio/invest.html', portfolio=eval(portfolio))
+        portfolio = eval(request.form.get('portfolio'))
+
+        # Get risk level (High, Medium, Low)
+        risk_level = [label for label in portfolio["labels"] if label["type"] == "risk"][0]["text"].split()[0]
+
+        return render_template('portfolio/invest.html', portfolio=portfolio, risk_level=risk_level)
 
 
 @portfolio.route('/get_stock_prices', methods=['POST'])
