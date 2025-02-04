@@ -34,7 +34,7 @@ class Portfolio2(db.Model):
     labels = db.Column(db.JSON, nullable=True) # Array of JSON to store labels
     short_description = db.Column(db.Text, nullable=True)
     long_description = db.Column(db.ARRAY(db.String), nullable=True) # Array of strings, 1 element = 1 sentence
-    allocation = db.Column(db.JSON, nullable=True)  # Array of JSON to store allocation details
+    assets = db.Column(db.JSON, nullable=True)  # Array of JSON to store allocation details
     returns = db.Column(db.JSON, nullable=True) # JSON to store returns
 
     def __repr__(self):
@@ -47,7 +47,7 @@ class Portfolio2(db.Model):
             "labels": self.labels,
             "short_description": self.short_description,
             "long_description": self.long_description,
-            "allocation": self.allocation,
+            "assets": self.assets,
             "returns": self.returns,
         }
 

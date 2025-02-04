@@ -59,7 +59,8 @@ def invest():
 @portfolio.route('/get_stock_prices', methods=['POST'])
 def get_stock_prices():
     data = request.get_json()
-    tickers = data.get("tickers", [])
+    assets = data.get("assets", [])
+    tickers = [asset["ticker"] for asset in assets]
 
     if not tickers:
         return jsonify({"error": "No tickers provided"}), 400
@@ -91,8 +92,11 @@ def get_stock_prices():
 @portfolio.route('/get_portfolio_returns', methods=['POST'])
 def get_portfolio_returns():
     data = request.get_json()
-    tickers = data.get("tickers", [])
-    allocations = data.get("allocations", {})
+    assets = data.get("assets", [])
+    tickers = [asset["ticker"] for asset in assets]
+    allocations = {asset["ticker"]: asset["allocation"] / 100 for asset in assets}
+    # tickers = data.get("tickers", [])
+    # allocations = data.get("allocations", {})
     period = data.get("period", "6m")  # Default to 6 months
 
     if not tickers:
@@ -129,8 +133,9 @@ def get_portfolio_returns():
 def get_daily_performance():
     try:
         data = request.get_json()
-        tickers = data.get("tickers", [])
-        allocations = data.get("allocations", {})
+        assets = data.get("assets", [])
+        tickers = [asset["ticker"] for asset in assets]
+        allocations = {asset["ticker"]: asset["allocation"] / 100 for asset in assets}
 
         if not tickers:
             return jsonify({"error": "No tickers provided"}), 400

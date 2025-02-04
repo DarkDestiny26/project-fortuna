@@ -1,18 +1,11 @@
 $(document).ready(function() {
 
-    // Sample portfolio data
-    const portfolio = {
-        totalValue: 125000,
-        dailyChange: 2.3,
-        assets: [
-            { id: 1, name: 'AAPL', price: 180.5, change: 0, allocation: 7.22 },
-            { id: 2, name: 'GOOGL', price: 2850.2, change: 0, allocation: 34.20 },
-            { id: 3, name: 'MSFT', price: 378.9, change: 0, allocation: 30.31 },
-            { id: 4, name: 'AMZN', price: 145.2, change: 0, allocation: 23.23 },
-            { id: 5, name: 'TSLA', price: 210.8, change: 0, allocation: 5.04 }
-        ]
-    };
-
+    // Create deep copy of portfolio.assets so that we can add 'price' and 'change' attributes
+    let assets = JSON.parse(JSON.stringify(portfolio.assets));
+    assets.forEach(asset => {
+        asset.price = 0;
+        asset.change = 0;
+    });
 
     // Format currency
     const formatCurrency = (value) => {
@@ -23,18 +16,16 @@ $(document).ready(function() {
     };
 
     function fetchStockPrices() {
-        const tickers = portfolio.assets.map(asset => asset.name); // Get tickers from portfolio object
-
         $.ajax({
             url: "get_stock_prices",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ tickers: tickers }),
+            data: JSON.stringify({ assets: assets }),
             success: function(data) {
-                portfolio.assets.forEach(asset => {
-                    if (data[asset.name]) {
-                        asset.price = data[asset.name].price; // Update asset price
-                        asset.change = data[asset.name].change; // Percentage change
+                assets.forEach(asset => {
+                    if (data[asset.ticker]) {
+                        asset.price = data[asset.ticker].price; // Update asset price
+                        asset.change = data[asset.ticker].change; // Percentage change
                     }
                 });
                 populateTable();
@@ -49,17 +40,11 @@ $(document).ready(function() {
 
     function fetchPortfolioReturns() {
         return new Promise((resolve, reject) => {
-            const tickers = portfolio.assets.map(asset => asset.name);
-            const allocations = {};
-            portfolio.assets.forEach(asset => {
-                allocations[asset.name] = asset.allocation / 100; // Convert allocation to decimal
-            });
-
             $.ajax({
                 url: "get_portfolio_returns",
                 type: "POST",
                 contentType: "application/json",
-                data: JSON.stringify({ tickers: tickers, allocations: allocations, period: selectedPeriod }),
+                data: JSON.stringify({ assets: assets, period: selectedPeriod }),
                 success: function(data) {
                     if (data.dates && data.returns) {
                         renderReturnsChart(data.dates, data.returns); // Call chart update
@@ -77,17 +62,11 @@ $(document).ready(function() {
     }
 
     function fetchDailyPerformance() {
-        const tickers = portfolio.assets.map(asset => asset.name);
-        const allocations = {};
-        portfolio.assets.forEach(asset => {
-            allocations[asset.name] = asset.allocation / 100; // Convert allocation to decimal
-        });
-
         $.ajax({
             url: "get_daily_performance",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ tickers: tickers, allocations: allocations }),
+            data: JSON.stringify({ assets: assets }),
             success: function(data) {
                 if (data.daily_return !== undefined) {
 
@@ -118,12 +97,12 @@ $(document).ready(function() {
         const tbody = $('#assetsTable tbody');
         tbody.empty();
         
-        portfolio.assets.forEach(asset => {
-            const changeClass = asset.change >= 0 ? "text-success" : "text-danger"; // Green for positive, red for negative   
+        assets.forEach(asset => {
+            const changeClass = "text-danger";
 
             tbody.append(`
                 <tr class="asset-row" data-asset-id="${asset.id}">
-                    <td>${asset.name}</td>
+                    <td>${asset.ticker}</td>
                     <td class="text-end ${changeClass}">${formatCurrency(asset.price)}</td>
                     <td class="text-end ${changeClass}">${asset.change.toFixed(2)}%</td>
                     <td class="text-end">${asset.allocation.toFixed(2)}%</td>
@@ -138,7 +117,7 @@ $(document).ready(function() {
         new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: portfolio.assets.map(asset => asset.name),
+                labels: portfolio.assets.map(asset => asset.ticker),
                 datasets: [{
                     data: portfolio.assets.map(asset => asset.allocation),
                     backgroundColor: [
@@ -146,7 +125,10 @@ $(document).ready(function() {
                         '#22c55e',
                         '#eab308',
                         '#ef4444',
-                        '#8b5cf6'
+                        '#8b5cf6',
+                        '#06b6d4',
+                        '#f97316',
+                        '#ec4899'
                     ]
                 }]
             },
@@ -247,9 +229,9 @@ $(document).ready(function() {
 
         // Define risk angles
         const riskAngles = {
-            "Low": Math.PI * 1.25,         // Left side
+            "Low": Math.PI * 1.2,         // Left side
             "Moderate": Math.PI * 1.5, // Middle
-            "High": Math.PI * 1.75      // Right side
+            "High": Math.PI * 1.8      // Right side
         };
 
         const color = riskColors[riskLevel] || "#eab308"; // Default to yellow

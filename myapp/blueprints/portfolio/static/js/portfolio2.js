@@ -124,9 +124,9 @@ $(document).ready(function() {
         new Chart(ctx, {
             type: "doughnut",
             data: {
-                labels: portfolio.allocation.map(item => item.name),
+                labels: portfolio.assets.map(item => item.name),
                 datasets: [{
-                    data: portfolio.allocation.map(item => item.value),
+                    data: portfolio.assets.map(item => item.allocation),
                     backgroundColor: [
                         "#3a0ca3", "#f72585", "#4361ee", "#9d5ee6", "#715EE6", "#5EA2E6", "#C95EE6", "#B3ABE6"
                         //"#4361ee", "#3a0ca3", "#7209b7", "#f72585", "#4cc9f0"
