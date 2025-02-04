@@ -205,23 +205,6 @@ h1 {
     background: #555;
 }
 
-.risk-meter {
-    height: 8px;
-    background-color: #e2e8f0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 8px 0;
-}
-
-.risk-level {
-    height: 100%;
-    transition: width 0.3s ease;
-}
-
-.risk-low { background-color: var(--risk-low); }
-.risk-medium { background-color: var(--risk-medium); }
-.risk-high { background-color: var(--risk-high); }
-
 .feature-list {
     list-style: none;
     padding: 0;
@@ -258,4 +241,11 @@ h1 {
     .table tbody td {
         padding: 0.75rem;
     }
+}
+
+/* Remove arrows from numeric form input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }

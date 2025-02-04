@@ -261,9 +261,8 @@ $(document).ready(function() {
     });
 
     // Handle purchase units input
-    $('#unitsInput').on('input', function() {
-        const units = Math.max(1, parseInt($(this).val()) || 1);
-        const totalCost = portfolio.totalValue * units;
+    $('#fundAmountInput').on('input', function() {
+        const totalCost = parseFloat($("#fundAmountInput").val()) || 0;
         $('#totalCost').text(formatCurrency(totalCost));
     });
 

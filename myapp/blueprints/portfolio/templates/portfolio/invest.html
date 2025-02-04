@@ -111,20 +111,20 @@
                 <div class="col-md-3">
                     <div class="card h-100">
                         <div class="card-header">
-                            <h5 class="card-title">Purchase Portfolio Units</h5>
+                            <h5 class="card-title">Fund Your Portfolio</h5>
                         </div>
                         <div class="card-body">
                             <div class="mb-4">
-                                <label for="unitsInput" class="form-label stats-label">Number of Units</label>
-                                <input type="number" class="form-control" id="unitsInput" min="1" value="1">
+                                <label for="fundAmountInput" class="form-label stats-label">Amount to Fund ($)</label>
+                                <input type="number" class="form-control" id="fundAmountInput" value="1000">
                             </div>
                             <div class="mb-4">
                                 <div class="stats-label">Total Cost</div>
-                                <div class="stats-value" id="totalCost">$125,000</div>
+                                <div class="stats-value" id="totalCost">$1000.00</div>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-primary w-100" id="purchaseBtn">Purchase Portfolio</button>
+                            <button class="btn btn-primary w-100" id="purchaseBtn">Add funds</button>
                         </div>
                     </div>
                 </div>
@@ -137,7 +137,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script> 
-        const risk_level = {{ risk_level | tojson | safe}};
+        const risk_level = {{ risk_level|tojson|safe }};
+        const portfolio = {{ portfolio|tojson|safe }};
     </script>
     <script src="{{url_for('portfolio.static', filename='js/invest.js')}}"></script>
 {% endblock custom_js %}
