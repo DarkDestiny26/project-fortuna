@@ -12,78 +12,160 @@ with app.app_context():
     portfolio_1 = Portfolio(
         name="Total Stock Market Portfolio",
         short_description="The Total Stock Market Portfolio is the simplest and most cost-effective way for anyone to invest their money without overthinking it.",
-        long_description="In contrast to the common advice to never put all of your eggs in one basket, the Total Stock Market portfolio does just the opposite. Buy a single total market stock fund and for the most part just ignore it. It doesn't get much simpler than that! \
-While hardcore asset allocation fans may think that sounds way too simplistic, there's a lot of merit to the idea that young investors are best served by spending less time on fine tuning their portfolios and more time on earning and saving. \
-The most articulate advocate for this line of thinking today is perhaps JL Collins. Here's what he has to say about the idea of putting everything in a total market fund and calling it a day: \
-Owning 100% stocks like this is considered “very aggressive.”  It is and you should be.  You have decades ahead.  Market ups and downs don't matter 'cause you avoid panic and stay the course. \
-If anything, you recognize them as the “stocks on sale” buying opportunities they are.  Perhaps 40 years from now you might want to add a Bond Index Fund to smooth out the ups and downs.  Worry about that 40 years from now. \
-Collins has a substantial following in the FIRE community, and the Total Stock Market Portfolio (which he refers to as the Wealth Building Portfolio) is a staple among aggressive young investors looking to race to financial independence. \
-It's a good choice for people who want to truly keep it simple and who are willing and able to power through the inevitable drawdowns that come with a volatile asset allocation.",
-        type=["Traditional"],  # Array of strings
-        allocation={"Total Stock Market":100},  # JSON data
-        image_url="total.png"
+        long_description=[
+            "Advocates simplicity by investing in a single total market stock fund and largely ignoring market fluctuations.",
+            "Young investors are encouraged to focus on earning and saving rather than fine-tuning portfolios, embracing an aggressive 100% stock allocation.",
+            "This approach is ideal for those seeking financial independence through a straightforward, high-risk, high-reward strategy, with the potential to add bonds decades later for stability."
+        ],
+        labels = [ 
+            { "text": "High Risk", "type": "risk" },
+            { "text": "Traditional", "type": "label" }
+        ],  
+        assets = [
+            {"name":"Total Stock Market", "allocation":100, "ticker":"VTI"}
+        ],
+        returns = {
+            "oneYear": 20,
+            "threeYear": 3,
+            "fiveYear": 9
+        }
     )
 
     portfolio_2 = Portfolio(
         name="Weird Portfolio",
         short_description="The Weird Portfolio by Value Stock Geek combines factor investing and risk parity concepts into an asset allocation designed to maximize returns and minimize stress.",
-        long_description="Value Stock Geek has an interesting and refreshingly honest approach to investing. Because he is a natural stock picker and value investor who enjoys researching individual companies, one might think that he'd not be the biggest fan of passive asset allocation. \
-But to the contrary — the Weird Portfolio is his solution for establishing a secure investing foundation that allows him to invest in what he calls his “speculative” portfolio without worry. \
-True to his value investing moniker , the Weird Portfolio commits to small and value stock allocations over traditional cap-weighted funds. Beyond simply expanding into international markets, it also incorporates modern risk parity concepts with multiple volatile \
-assets like gold, REITs, and long term treasuries to balance each other out and generate consistent returns in any economic condition. With multiple complementary assets including international diversification and factor investing ideas, the Weird Portfolio may \
-indeed seem strange in an old-school sense but is a decidedly contemporary mix of popular investing concepts.",
-        type=["Factor based", "Risk parity"],  # Array of strings
-        allocation={"Small Cap Value":20, "International Small Cap Blend":20, "Long Term Bonds":20, "REITs":20, "Gold":20},  # JSON data
-        image_url="weird.png"
+        long_description=[
+            "Combines passive asset allocation with active stock picking, serving as a stable foundation for more speculative investments.",
+            "Emphasizes small-cap and value stock allocations over traditional cap-weighted funds, aligning with modern value investing principles.",
+            "Incorporates risk parity concepts and balancing volatile assets to ensure consistent returns across economic conditions."
+        ],
+        labels = [ 
+            { "text": "Low Risk", "type": "risk" },
+            { "text": "Factor based", "type": "label" },
+            { "text": "Risk parity", "type": "label" }
+        ],
+        assets = [
+            {"name":"Small Cap Value", "allocation": 20, "ticker": "VBR"},
+            {"name":"International Small Cap Blend", "allocation": 20, "ticker": "VSS"},
+            {"name":"Long Term Bonds", "allocation": 20, "ticker": "BLV"},
+            {"name":"REITs", "allocation": 20, "ticker": "VNQ"},
+            {"name":"Gold", "allocation": 20, "ticker": "IAUM"}
+        ],  
+        returns = {
+            "oneYear": 5,
+            "threeYear": -4,
+            "fiveYear": 1
+        }
     )
 
     portfolio_3 = Portfolio(
         name="Core Four Portfolio",
         short_description="The Core Four Portfolio by Rick Ferri invests in four fundamentally unique asset types that are productive both on their own and as a group.",
-        long_description="Rick Ferri has long been a vocal champion of low-cost DIY investing, and the Core Four Portfolio represents his best advice for people who want to escape high fees and complex asset allocations.The four assets in the Core Four are selected based on the following characteristics:\n\
-1. All have an economic purpose that is fundamentally different from each other.\n2. All produce regular cash-flow from interest, dividends or rents.\n3. The historic correlations between asset classes have resulted in a diversification benefit.\n\
-4. All asset classes can be purchased using a very-low cost index fund or ETF.\n A notable part of Ferri's philosophy is evident in the juxtaposition of points 2 and 3. While some portfolios select assets primarily for how they affect overall performance \
-as a group, Ferri believes that they should also stand on their own with regular cash-flow. The Core Four Portfolio does a nice job of distilling several similar portfolios down to their simplest form, and is a good choice for investors seeking a solid financial \
-foundation with low fees and minimum complexity.",
-        type=["Traditional"],  # Array of strings
-        allocation={"Domestic Stocks":48, "International Stocks":24, "Intermediate Bonds":20, "REITs":8},  # JSON data
-        image_url="core_4.png"
+        long_description=[
+            "Includes four assets that serve distinct economic purposes, generate regular cash flow, and provide diversification through low historic correlations.",
+            "All asset classes are accessible via low-cost index funds or ETFs, ensuring simplicity and affordability.",
+            "Balances individual asset performance with overall diversification, offering a solid and straightforward financial foundation."
+        ],
+        labels = [ 
+            { "text": "High Risk", "type": "risk" },
+            { "text": "Traditional", "type": "label" }
+        ],
+        assets= [
+                { "name": "Domestic Stocks", "allocation": 48, "ticker": "VOO" },
+                { "name": "International Stocks", "allocation": 24, "ticker": "VEU"},
+                { "name": "Intermediate Bonds", "allocation": 20, "ticker": "BIV" },
+                { "name": "REITs", "allocation": 8, "ticker": "VNQ" }
+        ],
+        returns = {
+            "oneYear": 11,
+            "threeYear": 0,
+            "fiveYear": 5
+        }
     )
 
     portfolio_4 = Portfolio(
         name="No-Brainer Portfolio",
         short_description="The No-Brainer Portfolio by William Bernstein is a simple and straightforward approach to asset, region, and factor diversification that accomplishes all three in just four assets.",
-        long_description="The No-Brainer Portfolio, also sometimes called the Simpleton's Portfolio, is an interesting study in asset allocation. Bernstein is a self-described “asset junkie” who enjoys discussing all types of increasingly sophisticated portfolios \
-custom designed for unique investor needs and fine-tuned with advanced concepts like efficient frontiers. While the No-Brainer Portfolio is just the simplest introductory idea in The Intelligent Asset Allocator, I also think it uniquely expresses some of his most fundamental insights.\n\
-Bernstein tends to talk about his ideas self-deprecatingly in terms of naive but effective diversification, but the thing I find most interesting is how the No-Brainer Portfolio tackles three different types of diversification in the most efficient way possible. By adding small cap stocks, international stocks, \
-and short term bonds to a traditional large cap stock fund, it demonstrates how easy it is to construct a well-considered asset allocation that doesn't depend so much on the handful of large cap companies that tend to dominate stock returns. For a lot of people looking for maximum diversification with minimum effort, that really is a no-brainer.",
-        type=["Includes cash", "Traditional"],  # Array of strings
-        allocation={"Large Cap Blend":25, "Small Cap Blend":25, "International Stocks":25, "Short Term Bonds":25},  # JSON data
-        image_url="no_brainer.png"
+        long_description=[
+            "Simplifies asset allocation by combining large-cap stocks with small-cap stocks, international stocks, and short-term bonds for efficient diversification.",
+            "Reflects Bernstein's core insights on achieving naive yet effective diversification with minimal effort.",
+            "Offers a straightforward way to reduce reliance on large-cap companies and achieve broad market exposure."
+        ],
+        labels = [ 
+            { "text": "Medium Risk", "type": "risk" },
+            { "text": "Traditional", "type": "label" },
+            { "text": "Includes cash", "type": "label" }
+        ],
+        assets = [
+                { "name": "Large Cap Blend", "allocation": 25, "ticker": "VOO" },
+                { "name": "Small Cap Blend", "allocation": 25, "ticker": "VB" },
+                { "name": "International Stocks", "allocation": 25, "ticker": "VEU" },
+                { "name": "Short Term Bonds", "allocation": 25, "ticker": "BSV" }
+        ],
+        returns = {
+            "oneYear": 9,
+            "threeYear": 0,
+            "fiveYear": 4
+        }
     )
 
     portfolio_5 = Portfolio(
         name="Pin Wheel Portfolio",
         short_description="The Pinwheel Portfolio provides broad asset diversification that builds upon the four traditional asset classes with performance-enhancing tilts.",
-        long_description="Browse enough portfolios and you'll start to notice a pattern where a large number of financial professionals all recommend the same common assets — domestic stocks, international stocks, intermediate bonds, and real estate. The Pinwheel Portfolio adopts each of those four assets in equal weights, \
-and adds one complementary asset of each type to boost returns and minimize risk.\n1. Domestic Stocks > Small Cap Value\n2. International Stocks > Emerging Markets\n3. Intermediate Bonds > Cash\n4. Real Estate > Gold\nThe end result is a uniquely balanced portfolio with an intelligently modern twist on a traditional 4-asset \
-foundation. Featuring high returns and healthy withdrawal rates, it's a good portfolio choice for both accumulators and retirees. And it's also an easy evolution for many investors looking to add new assets to the ones they already own.",
-        type=["Factor based", "Includes cash"],  # Array of strings
-        allocation={"Large Cap Blend":15, "Small Cap Value":10, "International Stocks":15, "Emerging Markets":10, "Intermediate Bonds":15, "Cash":10, "REITs":15, "Gold":10},  # JSON data
-        image_url="pin_wheel.png"
+        long_description=[
+            "Builds on a traditional 4-asset foundation by adding complementary assets to enhance returns and reduce risk.",
+            "Substitutes small-cap value for domestic stocks, emerging markets for international stocks, cash for intermediate bonds, and gold for real estate.",
+            "This balanced and modern portfolio offers high returns, healthy withdrawal rates, and is suitable for both accumulators and retirees."
+        ],
+        labels = [ 
+            { "text": "Medium Risk", "type": "risk" },
+            { "text": "Factor based", "type": "label" },
+            { "text": "Includes cash", "type": "label" }
+        ],
+        assets = [
+                { "name": "Large Cap Blend", "allocation": 15, "ticker": "VOO" },
+                { "name": "Small Cap Value", "allocation": 10, "ticker": "VBR" },
+                { "name": "International Stocks", "allocation": 15, "ticker": "VEU" },
+                { "name": "Emerging Markets", "allocation": 10, "ticker": "VWO" },
+                { "name": "Intermediate Bonds", "allocation": 15, "ticker": "BIV" },
+                { "name": "Cash", "allocation": 10, "ticker": "VGSH" },
+                { "name": "REITs", "allocation": 15, "ticker": "VNQ" },
+                { "name": "Gold", "allocation": 10, "ticker": "IAUM" }
+        ],
+        returns = {
+            "oneYear": 8,
+            "threeYear": -1,
+            "fiveYear": 2
+        }
     )
 
     portfolio_6 = Portfolio(
         name="Golden Butterfly Portfolio",
         short_description="The Golden Butterfly Portfolio prioritizes consistently desirable investment growth by balancing economic conditions with an eye towards prosperity.",
-        long_description="The Golden Butterfly Portfolio is built on the idea of economic risk parity, similar to the Permanent Portfolio which shares four of its five assets. But while the Permanent Portfolio equally balances prosperity, recession, inflation, and deflation, the Golden Butterfly tilts the assets towards prosperity with an additional allocation to small cap value.\n\
-While to some that may seem like a trendy choice destined to underperform, the data reveals a remarkable truth. The Golden Butterfly is one of the best risk-adjusted portfolios out there, pairing the famous consistency of the Permanent Portfolio and the growth rates of far more aggressive options. \
-With a tight band of growth paths that are helpful for future estimates and notably high withdrawal rates that are great for retirees, it's a particularly dependable portfolio option suitable for both accumulators and retirees alike.",
-        type=["Factor based", "Includes cash", "Risk Parity"],  # Array of strings
-        allocation={"Large Cap Blend":20, "Small Cap Value":20, "Long Term Bonds":20, "Short Term Bonds":20, "Gold":20},  # JSON data
-        image_url="golden.png"
+        long_description=[
+            "Builds on the Permanent Portfolio's economic risk parity, adding a small-cap value tilt to emphasize prosperity.",
+            "It offers exceptional risk-adjusted returns, combining the stability of the Permanent Portfolio with growth rates of more aggressive strategies."
+            "With consistent growth paths and high withdrawal rates, it is a reliable choice for both accumulators and retirees."
+        ],
+        labels = [ 
+            { "text": "Low Risk", "type": "risk" },
+            { "text": "Factor based", "type": "label" },
+            { "text": "Includes cash", "type": "label" },
+            { "text": "Risk Parity", "type": "label" }
+        ],
+        assets = [
+                { "name": "Large Cap Blend", "allocation": 20, "ticker": "VOO" },
+                { "name": "Small Cap Value", "allocation": 20, "ticker": "VBR" },
+                { "name": "Long Term Bonds", "allocation": 20, "ticker": "BLV" },
+                { "name": "Short Term Bonds", "allocation": 20, "ticker": "BSV" },
+                { "name": "Gold", "value": 20, "allocation": "IAUM" }
+        ],
+        returns = {
+            "oneYear": 9,
+            "threeYear": -1,
+            "fiveYear": 2
+        }
     )
-
 
     db.session.add(portfolio_6)
     db.session.commit()
