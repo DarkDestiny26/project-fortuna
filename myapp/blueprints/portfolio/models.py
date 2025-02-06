@@ -1,34 +1,9 @@
 from myapp.app import db
 from sqlalchemy.dialects.postgresql import ARRAY
-
+    
 # Define the Portfolios table
 class Portfolio(db.Model):
     __tablename__ = 'portfolios'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    type = db.Column(db.ARRAY(db.String), nullable=True)
-    short_description = db.Column(db.Text, nullable=True)
-    long_description = db.Column(db.Text, nullable=True)
-    image_url = db.Column(db.String(100), nullable=True)
-    allocation = db.Column(db.JSON, nullable=True)  # JSON to store allocation details
-
-    def __repr__(self):
-        return f"<Portfolio {self.name}>"
-    
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "type": self.type,
-            "short_description": self.short_description,
-            "long_description": self.long_description,
-            "image_url": self.image_url,
-            "allocation": self.allocation,
-        }
-    
-# Define the Portfolios table
-class Portfolio2(db.Model):
-    __tablename__ = 'portfolios2'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     labels = db.Column(db.JSON, nullable=True) # Array of JSON to store labels

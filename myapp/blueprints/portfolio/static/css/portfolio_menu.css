@@ -1,3 +1,16 @@
+:root {
+    --primary-color: #4361ee;
+    --text-color: #1e293b;
+    --success-color: #10b981;
+    --border-radius: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
 h1 {
     font-size: 2rem;
     margin-bottom: 2rem;
@@ -43,62 +56,6 @@ button:hover {
     background-color: #0056b3;
     color: white;
 }
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-.portfolio-card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.portfolio-card-header {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
-}
-.portfolio-card-content {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.portfolio-card-footer {
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-}
-.portfolio-card-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-top: auto;
-    flex-shrink: 0;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-.portfolio-name {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin: 0;
-}
-.portfolio-type {
-    color: #6c757d;
-    font-size: 0.875rem;
-}
-.portfolio-description {
-    font-size: 0.875rem;
-    color: #333;
-    margin-top: 0.5rem;
-}
 
 .suggested-portfolios {
     color: black;
@@ -106,93 +63,284 @@ button:hover {
     border: 1px solid #e9ecef;
 }
 
-.modal {
-    display: none;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
+.portfolio-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
 }
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
+
+.portfolio-card {
+    background: white;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    height: 100%; /* Ensure equal height cards */
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+}
+.card-header {
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: transparent;
+}
+
+.card-body {
+    padding: 1rem 2rem;
+    flex-grow: 1; /* Allow body to expand and push footer down */
+}
+
+.card-footer {
+    padding: 1rem 2rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: transparent;
+    display: flex;
+    justify-content: space-between;
+}
+.return-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+    line-height: 1;
+}
+
+.return-label {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.return-info {
+    min-width: 120px; /* Ensure consistent width for return info */
+    text-align: right;
+}
+
+.portfolio-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.portfolio-description {
+    color: #64748b;
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+    padding-right: 2rem; /* Add padding to prevent overlap */
+    max-width: 70%; /* Limit width to prevent overlap with return value */
+    padding-left: 0;
+    list-style-type: none;
+
+    li {
+        margin-bottom: 0.75rem;
+        position: relative;
+        padding-left: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    li::before {
+        content: "•";
+        font-weight: bold;
+        display: inline-block;
+        position: absolute;
+        left: 0.5rem;
+    }
+}
+
+.portfolio-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.portfolio-type {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-.modal-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-.modal-title {
-    font-size: 1.8rem;
-}
-.modal-description {
-    margin-bottom: 1rem;
-}
-.modal-allocation {
-    font-weight: bold;
-    margin-bottom: 1rem;
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
 
-.invest-button {
-    display: block;
-    width: 100%;
-    padding: 0.75rem;
-    background-color: #28a745;
-    color: white;
+.labels-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.label {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.risk-high {
+    background-color: #fef2f2;
+    color: #dc2626;
+}
+
+.risk-medium {
+    background-color: #fefce8;
+    color: #ca8a04;
+}
+
+.risk-low {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: auto;  /* Remove flex-grow */
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
     border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-.invest-button:hover {
-    background-color: #218838;
 }
 
-@media (max-width: 768px) {
-    .search-filter {
+.btn-primary:hover {
+    background-color: #3651d5;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border-color: #e2e8f0;
+    color: var(--text-color);
+}
+
+.btn-outline-primary:hover {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: var(--primary-color);
+}
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #2b2d42;
+    margin-bottom: 1rem;
+}
+.card-buttons {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    padding: 1.5rem 1.5rem 0.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #2b2d42;
+}
+
+.modal-body .portfolio-description {
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    max-width: none;
+    padding: 0 0.8rem;
+    font-size: 1.2rem;
+}
+.allocation-chart-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.returns-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+    margin-top: 1.5rem;
+
+    .return-item {
+        display: flex;
+        align-items: center;
         flex-direction: column;
+        padding: 0.5rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        text-align: center;
+        flex: 1;
+        margin: 0 0.25rem;
     }
-    select, button {
-        width: 100%;
+    
+    .return-item:hover {
+        background-color: #e9ecef;
     }
-    .portfolio-card-content {
-        flex-direction: column;
+    
+    .return-label {
+        font-weight: 500;
+        color: #2b2d42;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
-    .portfolio-card-image {
-        width: 100%;
-        height: 150px;
-        margin-left: 0;
-        margin-top: 1rem;
+    
+    .return-value {
+        font-weight: 600;
+        color: #4361ee;
+        font-size: 2rem;
     }
-    .modal-content {
-        width: 95%;
-        margin: 5% auto;
+}
+
+canvas {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    .modal-dialog {
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 992px) {
+    .portfolio-container {
+        grid-template-columns: 1fr; /* Single column on smaller screens */
+    }
+}
+
+@media (min-width: 768px) {
+    .modal-dialog {
+        max-width: 700px;
     }
 }
