@@ -1,8 +1,9 @@
 from flask import render_template, request, redirect, url_for, Blueprint, jsonify
-from flask_login import login_required
+from flask_login import login_required, current_user
 import json, yfinance as yf, pandas as pd
+from datetime import datetime
 
-from myapp.blueprints.portfolio.models import Portfolio
+from myapp.blueprints.portfolio.models import Portfolio, UserPortfolio
 from myapp.app import db
 
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
@@ -112,39 +113,47 @@ def get_portfolio_returns():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-    
+
 @portfolio.route('/get_daily_performance', methods=['POST'])
 def get_daily_performance():
     try:
         data = request.get_json()
-        assets = data.get("assets", [])
-        tickers = [asset["ticker"] for asset in assets]
-        allocations = {asset["ticker"]: asset["allocation"] / 100 for asset in assets}
+        portfolio_name = data.get("portfolio_name", "")
+        portfolio = Portfolio.query.filter_by(name=portfolio_name).first()
+        return jsonify({"daily_return": portfolio.daily_return})
 
-        if not tickers:
-            return jsonify({"error": "No tickers provided"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-        # Fetch last 2 days of data to calculate daily return
-        stock_data = yf.download(tickers, period="2d", interval="1d")["Close"]
 
-        if stock_data.empty:
-            return jsonify({"error": "No stock data found"}), 500
+@portfolio.route('/add_portfolio', methods=['POST'])
+def add_portfolio():
+    try:
+        data = request.get_json()
+        portfolio = data.get("portfolio")
+        fund_amount = data.get("fund_amount")
 
-        # Convert Series to DataFrame if only one ticker
-        if isinstance(stock_data, pd.Series):  
-            stock_data = stock_data.to_frame()
+        user_id = current_user.id
+        tickers = [asset["ticker"] for asset in portfolio["assets"]]
+        allocations = [asset["allocation"] / 100 for asset in portfolio["assets"]]
 
-        # Ensure allocations match available tickers
-        allocations = {ticker: allocations[ticker] for ticker in stock_data.columns if ticker in allocations}
-        weights = pd.Series(allocations)
+        # Fetch latest stock prices
+        prices = yf.download(tickers, period="1d", interval="1m")["Close"].iloc[-1]
 
-        # Calculate daily return for each stock
-        daily_returns = stock_data.pct_change().dropna()
+        # Compute allocated amount and number of shares
+        assets = [
+            {"ticker": ticker, "units": (fund_amount * alloc) / float(prices[ticker])}
+            for ticker, alloc in zip(tickers, allocations)
+        ]
 
-        # Compute portfolio's weighted daily return
-        portfolio_daily_return = daily_returns.iloc[-1].dot(weights)  # Latest day's return
+        # Create UserPortfolio entry
+        user_portfolio = UserPortfolio(user_id=user_id, portfolio_id=portfolio['id'], added_on=datetime.now(), value=fund_amount, assets=assets)
 
-        return jsonify({"daily_return": portfolio_daily_return})
+        print(user_portfolio)
+        db.session.add(user_portfolio)
+        db.session.commit()
 
+        return jsonify({"status": "success", "message": "Portfolio added successfully!"})
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500

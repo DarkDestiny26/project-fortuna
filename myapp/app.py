@@ -40,5 +40,9 @@ def create_app():
 
     migrate = Migrate(app, db)
 
+    from myapp.blueprints.portfolio.models import start_background_thread
+
+    start_background_thread(app)  # Start the background update thread
+
     return app
     

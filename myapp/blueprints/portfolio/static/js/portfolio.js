@@ -41,7 +41,7 @@ $(document).ready(function() {
                                 ${renderLabels(portfolio.labels)}
                             </div>
                             <div class="return-info">
-                                <div class="return-value">${portfolio.returns.oneYear}%</div>
+                                <div class="return-value">${portfolio.annual_returns.oneYear}%</div>
                                 <div class="return-label">Annual Return</div>
                             </div>
                         </div>
@@ -97,9 +97,9 @@ $(document).ready(function() {
         const portfolio = $(this).data('portfolio');
 
         $('#modalTitle').text(portfolio.name);
-        $("#oneYearReturn").text(portfolio.returns.oneYear.toFixed(1) + "%");
-        $("#threeYearReturn").text(portfolio.returns.threeYear.toFixed(1) + "%");
-        $("#fiveYearReturn").text(portfolio.returns.fiveYear.toFixed(1) + "%");
+        $("#oneYearReturn").text(portfolio.annual_returns.oneYear.toFixed(1) + "%");
+        $("#threeYearReturn").text(portfolio.annual_returns.threeYear.toFixed(1) + "%");
+        $("#fiveYearReturn").text(portfolio.annual_returns.fiveYear.toFixed(1) + "%");
 
         // Clear list before appending new elements to list
         $('#modalDescription').empty();

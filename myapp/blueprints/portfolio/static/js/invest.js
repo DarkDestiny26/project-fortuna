@@ -66,7 +66,7 @@ $(document).ready(function() {
             url: "get_daily_performance",
             type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ assets: assets }),
+            data: JSON.stringify({ portfolio_name: portfolio.name }),
             success: function(data) {
                 if (data.daily_return !== undefined) {
 
@@ -98,16 +98,26 @@ $(document).ready(function() {
         tbody.empty();
         
         assets.forEach(asset => {
-            const changeClass = "text-danger";
-
-            tbody.append(`
-                <tr class="asset-row" data-asset-id="${asset.id}">
-                    <td>${asset.ticker}</td>
-                    <td class="text-end ${changeClass}">${formatCurrency(asset.price)}</td>
-                    <td class="text-end ${changeClass}">${asset.change.toFixed(2)}%</td>
-                    <td class="text-end">${asset.allocation.toFixed(2)}%</td>
-                </tr>
-            `);
+            if(asset.change>=0){
+                tbody.append(`
+                    <tr class="asset-row" data-asset-id="${asset.id}">
+                        <td>${asset.ticker}</td>
+                        <td class="text-end">${formatCurrency(asset.price)}</td>
+                        <td class="text-end text-success">+${asset.change.toFixed(2)}%</td>
+                        <td class="text-end">${asset.allocation.toFixed(2)}%</td>
+                    </tr>
+                `);
+            }
+            else{
+                tbody.append(`
+                    <tr class="asset-row" data-asset-id="${asset.id}">
+                        <td>${asset.ticker}</td>
+                        <td class="text-end">${formatCurrency(asset.price)}</td>
+                        <td class="text-end text-danger">${asset.change.toFixed(2)}%</td>
+                        <td class="text-end">${asset.allocation.toFixed(2)}%</td>
+                    </tr>
+                `);
+            }
         });
     }
 
@@ -266,11 +276,38 @@ $(document).ready(function() {
         $('#totalCost').text(formatCurrency(totalCost));
     });
 
-    // Handle purchase button click
-    $('#purchaseBtn').on('click', function() {
-        const units = parseInt($('#unitsInput').val());
-        const totalCost = portfolio.totalValue * units;
-        alert(`Purchase confirmed!\nUnits: ${units}\nTotal Cost: ${formatCurrency(totalCost)}`);
+    // Handle add funds button click
+    $("#addFundsBtn").on("click", function () {
+        const fundAmount = parseFloat($("#fundAmountInput").val()) || 0;
+
+        if (fundAmount <= 0) {
+            alert("Please enter a valid amount to fund the portfolio.");
+            return;
+        }
+
+        // Create portfolio object to send via AJAX
+        const portfolioData = {
+            portfolio: portfolio,  // Flask variable
+            fund_amount: fundAmount
+        };
+
+        $.ajax({
+            url: "add_portfolio",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(portfolioData),
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("Portfolio successfully added!");
+                    $("#fundAmountInput").val("1000"); // Reset input
+                } else {
+                    alert("Error adding portfolio: " + response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while adding the portfolio.");
+            }
+        });
     });
 
     // Initialise table and charts
