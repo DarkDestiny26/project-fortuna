@@ -2,7 +2,8 @@
 
 from myapp.app import create_app
 from myapp.app import db
-from myapp.blueprints.portfolio.models import Portfolio
+from myapp.blueprints.portfolio.models import Portfolio, UserPortfolio
+from datetime import datetime
 
 app = create_app()
 
@@ -24,7 +25,7 @@ with app.app_context():
         assets = [
             {"name":"Total Stock Market", "allocation":100, "ticker":"VTI"}
         ],
-        returns = {
+        annual_returns = {
             "oneYear": 20,
             "threeYear": 3,
             "fiveYear": 9
@@ -51,7 +52,7 @@ with app.app_context():
             {"name":"REITs", "allocation": 20, "ticker": "VNQ"},
             {"name":"Gold", "allocation": 20, "ticker": "IAUM"}
         ],  
-        returns = {
+        annual_returns = {
             "oneYear": 5,
             "threeYear": -4,
             "fiveYear": 1
@@ -76,7 +77,7 @@ with app.app_context():
                 { "name": "Intermediate Bonds", "allocation": 20, "ticker": "BIV" },
                 { "name": "REITs", "allocation": 8, "ticker": "VNQ" }
         ],
-        returns = {
+        annual_returns = {
             "oneYear": 11,
             "threeYear": 0,
             "fiveYear": 5
@@ -102,7 +103,7 @@ with app.app_context():
                 { "name": "International Stocks", "allocation": 25, "ticker": "VEU" },
                 { "name": "Short Term Bonds", "allocation": 25, "ticker": "BSV" }
         ],
-        returns = {
+        annual_returns = {
             "oneYear": 9,
             "threeYear": 0,
             "fiveYear": 4
@@ -132,7 +133,7 @@ with app.app_context():
                 { "name": "REITs", "allocation": 15, "ticker": "VNQ" },
                 { "name": "Gold", "allocation": 10, "ticker": "IAUM" }
         ],
-        returns = {
+        annual_returns = {
             "oneYear": 8,
             "threeYear": -1,
             "fiveYear": 2
@@ -158,9 +159,9 @@ with app.app_context():
                 { "name": "Small Cap Value", "allocation": 20, "ticker": "VBR" },
                 { "name": "Long Term Bonds", "allocation": 20, "ticker": "BLV" },
                 { "name": "Short Term Bonds", "allocation": 20, "ticker": "BSV" },
-                { "name": "Gold", "value": 20, "allocation": "IAUM" }
+                { "name": "Gold", "allocation": 20, "ticker": "IAUM" }
         ],
-        returns = {
+        annual_returns = {
             "oneYear": 9,
             "threeYear": -1,
             "fiveYear": 2
@@ -170,3 +171,7 @@ with app.app_context():
     db.session.add(portfolio_6)
     db.session.commit()
     print(f"{portfolio_6.name} added successfully!")
+
+    # up = UserPortfolio(user_id=8, portfolio_id=1, added_on=datetime.now(), value=1000, assets=[{"ticker":"VOO", "units":1}])
+    # db.session.add(up)
+    # db.session.commit()
