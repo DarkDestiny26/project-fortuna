@@ -39,19 +39,75 @@ $(document).ready(function() {
         $("#addGoalForm")[0].reset();
     });
 
+    // AJAX to fetch latest user portfolio data to update dashboard 
     function fetchPortfolioData() {
         $.ajax({
-            url: 'get_user_portfolios', // Update with the correct API endpoint
+            url: 'get_user_portfolios',
             method: 'POST',
             contentType: "application/json",
             data: JSON.stringify({user_id: user_portfolios[0].user_id}),
             success: function(response) {
-                populateTable(response["user_portfolios"]);
+                const user_portfolios = response["user_portfolios"]
+                populateTable(user_portfolios);
+                updateTotalAssets(user_portfolios);
+                updatePnl(user_portfolios);
             },
             error: function(error) {
                 console.log("Error fetching portfolio data:", error);
             }
         });
+    }
+
+    // Update Total Assets card
+    function updateTotalAssets(user_portfolios){
+        let totalAssets = 0;
+
+        user_portfolios.forEach(up => {
+            totalAssets += up.value;
+        });
+
+        const formattedValue = "$" + totalAssets.toLocaleString(undefined, {maximumFractionDigits: 0});
+        $("#totalAssets").text(formattedValue);
+
+    }
+
+    // Update Today's PnL card
+    function updatePnl(user_portfolios){
+
+        let pnl = 0;
+        let totalValue = 0;
+
+        user_portfolios.forEach(up => {
+            pnl += up.value - (up.value / (1 + up.portfolio.daily_return));
+            totalValue += up.value;
+
+            //console.log(`${up.portfolio.name} | value: ${up.value} | daily_return: ${up.portfolio.daily_return}`);
+        });
+
+        const totalReturns = totalValue / (totalValue - pnl);
+
+        const pnlElement = $("#pnl");
+        const returnsElement = $("#returns");
+        const badgeElement = $(".badge");
+        const graphIcon = $(".icon i");
+        
+        const pnlFormatted = (pnl >= 0 ? "+" : "-") + "$" + Math.abs(pnl).toLocaleString(undefined, { maximumFractionDigits: 0 });
+        const returnsFormatted = Math.abs(totalReturns).toFixed(2) + "%";
+        
+        pnlElement.text(pnlFormatted);
+        returnsElement.text(returnsFormatted);
+        
+        if (pnl >= 0) {
+            pnlElement.removeClass("text-danger").addClass("text-success");
+            badgeElement.removeClass("badge-danger").addClass("badge-success");
+            returnsElement.removeClass("bi-arrow-down").addClass("bi-arrow-up");
+            graphIcon.removeClass("bi-graph-down").addClass("bi-graph-up");
+        } else {
+            pnlElement.removeClass("text-success").addClass("text-danger");
+            badgeElement.removeClass("badge-success").addClass("badge-danger");
+            returnsElement.removeClass("bi-arrow-up").addClass("bi-arrow-down");
+            graphIcon.removeClass("bi-graph-up").addClass("bi-graph-down");
+        }
     }
 
     // Populate portfolios table
