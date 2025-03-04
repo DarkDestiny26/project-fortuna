@@ -1,5 +1,5 @@
 {% extends "auth/base.html" %}
-{% block title %} Login - Fortuna Wealth Mangement {% endblock %}
+{% block title %} Login - Fortuna Wealth Management {% endblock %}
 {% block custom_css %}
     <link href="{{ url_for('auth.static', filename='css/auth.css') }}" rel="stylesheet">
 {% endblock custom_css %}
@@ -27,7 +27,7 @@
                         </div>
                     </form>
                     <div class="text-center mt-3">
-                        <a href="{{url_for('auth.register')}}" class="create-account">Create new account</a>
+                        <a href="{{url_for('auth.create_account')}}" class="create-account">Create new account</a>
                     </div>
                 </div>
             </div>

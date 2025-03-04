@@ -7,7 +7,6 @@ from myapp.app import db
 auth = Blueprint('auth', __name__, template_folder='templates', static_folder='static')
 bcrypt = None
 
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
@@ -28,13 +27,15 @@ def login():
             return redirect(url_for('dashboard.index'))
         else:
             return 'U typed the wrong password baka!'
-        
+    
+@auth.route('/create-account')
+def create_account():
+    return render_template('auth/create_account.html')
 
-@auth.route('/register', methods=['GET', 'POST'])
+
+@auth.route('/register', methods=['POST'])
 def register():
-    if request.method == 'GET':
-        return render_template('auth/register.html')
-    elif request.method == 'POST':
+    if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         password_hash = auth.bcrypt.generate_password_hash(password).decode('utf-8')
@@ -46,7 +47,10 @@ def register():
 
         return redirect(url_for('auth.login'))
     
+
 @auth.route('/logout')
 def logout():
     logout_user()
     return render_template('auth/logout.html')
+
+
