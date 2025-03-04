@@ -1,0 +1,155 @@
+{% extends "auth/base.html" %}
+
+{% block title %} Questionaire - Fortuna Wealth Management{% endblock %}
+
+{% block custom_css %}
+    <link href="{{ url_for('auth.static', filename='css/auth.css') }}" rel="stylesheet">
+{% endblock custom_css %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-100 py-5">
+        <div class="col-md-10 col-lg-8">
+            <div class="login-container">
+                <h1 class="text-center mb-4">Tell Us About Yourself</h1>
+                <h2 class="mb-4">Time Horizon</h2>
+                <form action="/register" method="POST">
+                    <div class="mb-4">
+                        <label for="financialGoal" class="form-label mb-2">I plan to begin withdrawing money from my investments in</label>
+                        <div class="form">
+                            <select class="form-select" id="financialGoal" name="financialGoal" required>
+                                <option value="" selected disabled>Select number of years</option>
+                                <option value="savings">Less than 3 years</option>
+                                <option value="investment">3-5 years</option>
+                                <option value="debt">6-10 years</option>
+                                <option value="retirement">11 years or more</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <label for="incomeRange" class="form-label mb-2">Once I begin withdrawing funds from my investments, I plan to spend all of the funds in</label>
+                        <div class="form">
+                            <select class="form-select" id="incomeRange" name="incomeRange" required>
+                                <option value="" selected disabled>Select number of years</option>
+                                <option value="0-25000">Less than 2 years</option>
+                                <option value="25001-50000">2-5 years</option>
+                                <option value="50001-75000">6-10 years</option>
+                                <option value="75001-100000">11 years or more</option>
+                            </select>
+                        </div>
+                    </div>
+                    <h2 class="mb-4">Risk Tolerance</h2>
+                    <div class="mb-4">
+                        <label for="financialGoal" class="form-label mb-2">I would describe my knowledge of investments as</label>
+                        <div class="form">
+                            <select class="form-select" id="financialGoal" name="financialGoal" required>
+                                <option value="" selected disabled>Select answer</option>
+                                <option value="savings">None</option>
+                                <option value="investment">Limited</option>
+                                <option value="debt">Good</option>
+                                <option value="retirement">Extensive</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="incomeRange" class="form-label mb-2">What amount of financial risk are you willing to take when you invest?</label>
+                        <div class="form">
+                            <select class="form-select" id="incomeRange" name="incomeRange" required>
+                                <option value="" selected disabled>Select answer</option>
+                                <option value="0-25000">Take lower than average risks expecting to earn lower than average returns</option>
+                                <option value="0-25000">Take average risks expecting to earn average returns</option>
+                                <option value="25001-50000">Take above average risks expecting to earn above average returns</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label mb-2">Select all investments you currently own or have owned</label>
+                        <div class="checkbox-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="stocks" name="investmentAssets" value="stocks">
+                                <label class="form-check-label" for="stocks">Money market fund or cash investments</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="bonds" name="investmentAssets" value="bonds">
+                                <label class="form-check-label" for="bonds">Bonds and/or bond funds</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="realEstate" name="investmentAssets" value="realEstate">
+                                <label class="form-check-label" for="realEstate">Stocks and/or stock funds</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="crypto" name="investmentAssets" value="crypto">
+                                <label class="form-check-label" for="crypto">International securities and/or international funds</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="incomeRange" class="form-label mb-2">
+                            Imagine that in the past three months, the overall stock market lost 25% of its value.
+                            An individual stock investment you own also lost 25% of its value. What would you do?
+                        </label>
+                        <div class="form">
+                            <select class="form-select" id="incomeRange" name="incomeRange" required>
+                                <option value="" selected disabled>Select answer</option>
+                                <option value="0-25000">Sell all of my shares</option>
+                                <option value="0-25000">Sell some of my shares</option>
+                                <option value="25001-50000">Do nothing</option>
+                                <option value="25001-50000">Buy more shares</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label mb-2">
+                            We've outlined the most likely best-case and worst-case annual returns of 3 hypothetical investment plans.
+                            Which range of possible outcomes is most acceptable to you? The figures are hypothetical and do not represent the performance of any particular investment.
+                        </label>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Select</th>
+                                        <th>Average annual return</th>
+                                        <th>Best-case</th>
+                                        <th>Worst-case</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="riskTolerance" value="conservative" required>
+                                        </td>
+                                        <td>6%</td>
+                                        <td>23%</td>
+                                        <td>-17%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="riskTolerance" value="moderate" required>
+                                        </td>
+                                        <td>6.4%</td>
+                                        <td>26%</td>
+                                        <td>-23%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="radio" name="riskTolerance" value="aggressive" required>
+                                        </td>
+                                        <td>8.3%</td>
+                                        <td>34%</td>
+                                        <td>-36%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Continue</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

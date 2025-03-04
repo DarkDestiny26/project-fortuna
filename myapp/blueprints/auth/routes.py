@@ -32,6 +32,14 @@ def login():
 def create_account():
     return render_template('auth/create_account.html')
 
+@auth.route('/questionaire')
+def questionaire():
+    return render_template('auth/questionaire.html')
+
+@auth.route('/financial-goals')
+def goals():
+    return render_template('auth/financial_goals.html')
+
 
 @auth.route('/register', methods=['POST'])
 def register():

@@ -1,0 +1,55 @@
+.goal-card {
+    border: 2px solid #eee;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.goal-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.add-goal-btn {
+    background-color: transparent;
+    border: 2px dashed #ccc;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    color: #777;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.add-goal-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.remove-goal {
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.remove-goal:hover {
+    transform: scale(1.1);
+}
+
+.goal-progress {
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.page-title {
+    margin-bottom: 2rem;
+}
+
+.goal-type-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}

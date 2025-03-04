@@ -1,0 +1,66 @@
+{% extends "auth/base.html" %}
+
+{% block title %}Financial Goals - Fortuna Wealth Management{% endblock %}
+
+{% block custom_css %}
+  <link href="{{ url_for('auth.static', filename='css/auth.css') }}" rel="stylesheet">
+  <link href="{{ url_for('auth.static', filename='css/financial_goals.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="login-container">
+          <div class="text-center mb-4">
+            <h1 class="page-title">Set Your Financial Goals</h1>
+          </div>
+          
+          <form id="goals-form" action="{{ url_for('auth.register') }}" method="GET">
+            <div id="goals-container">
+              <!-- Initial goal card -->
+              <div class="goal-card" id="goal-1">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h2>Goal #1</h2>
+                  <span class="remove-goal d-none">&times;</span>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="goal-name-1" class="form-label">Goal Name</label>
+                  <input type="text" class="form-control" id="goal-name-1" name="goal_name[]" placeholder="e.g., Buy a house, Pay off student loans" required>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="goal-amount-1" class="form-label">Target Amount</label>
+                    <div class="input-group">
+                      <span class="input-group-text">$</span>
+                      <input type="number" class="form-control" id="goal-amount-1" name="goal_amount[]" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="goal-date-1" class="form-label">Target Date</label>
+                    <input type="date" class="form-control" id="goal-date-1" name="goal_date[]" required>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Add goal button -->
+            <div class="add-goal-btn mb-4" id="add-goal-btn">
+              <i class="bi bi-plus-circle"></i> Add Another Goal
+            </div>
+            
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Create account</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script src="{{url_for('auth.static', filename='js/financial_goals.js')}}"></script>
+{% endblock custom_js %}
