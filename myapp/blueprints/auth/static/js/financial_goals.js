@@ -25,7 +25,19 @@ $(document).ready(function() {
       newGoal.find('input').each(function() {
         const idParts = $(this).attr('id').split('-');
         idParts[idParts.length - 1] = goalCount;
-        $(this).attr('id', idParts.join('-')).val('');
+        const newId = idParts.join('-');
+        $(this).attr('id', newId).val('');
+      });
+
+      // Update label 'for' attributes to match new input IDs
+      newGoal.find('label').each(function() {
+        const forAttr = $(this).attr('for');
+        if (forAttr) {
+          const forParts = forAttr.split('-');
+          forParts[forParts.length - 1] = goalCount;
+          const newFor = forParts.join('-');
+          $(this).attr('for', newFor);
+        }
       });
 
       // Apply min date restriction to new goal-date input
@@ -54,7 +66,26 @@ $(document).ready(function() {
     // Function to update goal numbers after removal
     function updateGoalNumbers() {
       $('.goal-card').each(function(index) {
-        $(this).find('h2').text(`Goal #${index + 1}`);
+        const goalNumber = index + 1;
+        $(this).find('h2').text(`Goal #${goalNumber}`);
+        
+        // Update input IDs and label 'for' attributes to match new goal numbers
+        $(this).find('input').each(function() {
+          const idParts = $(this).attr('id').split('-');
+          const fieldName = idParts[idParts.length - 2]; // Get the field name (name, amount, date)
+          const newId = `goal-${fieldName}-${goalNumber}`;
+          $(this).attr('id', newId);
+        });
+        
+        $(this).find('label').each(function() {
+          const forAttr = $(this).attr('for');
+          if (forAttr) {
+            const forParts = forAttr.split('-');
+            const fieldName = forParts[forParts.length - 2]; // Get the field name
+            const newFor = `goal-${fieldName}-${goalNumber}`;
+            $(this).attr('for', newFor);
+          }
+        });
       });
     }
     

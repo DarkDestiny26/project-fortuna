@@ -1,15 +1,18 @@
 {% extends "auth/base.html" %}
+
 {% block title %} Register - Fortuna Wealth Maangement {% endblock %}
+
 {% block custom_css %}
     <link href="{{ url_for('auth.static', filename='css/auth.css') }}" rel="stylesheet">
 {% endblock custom_css %}
+
 {% block content %}
 <div class="container">
         <div class="row justify-content-center align-items-center min-vh-100">
             <div class="col-md-6 col-lg-4">
                 <div class="login-container">
                     <h1 class="text-center mb-4">Create new account</h1>
-                    <form action="{{url_for('auth.questionaire')}}">
+                    <form action="{{url_for('auth.create_account')}}" method="POST">
                         <div class="mb-3">
                             <div class="form-floating">
                                 <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
