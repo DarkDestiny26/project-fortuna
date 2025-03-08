@@ -160,7 +160,7 @@ def register():
         financial_goal = FinancialGoal(
             user_id = session.get('_user_id'),
             name = fg['name'],
-            amount = fg['amount'],
+            target_amount = fg['amount'],
             target_date = datetime.strptime(fg['date'], '%Y-%m-%d').date(),
             added_on = datetime.now()
         )
@@ -169,6 +169,24 @@ def register():
     db.session.commit()
 
     return redirect(url_for('dashboard.index'))
+
+
+@auth.route("/add-financial-goal", methods=["POST"])
+@login_required
+def add_financial_goal():
+    data = request.get_json()
+    new_goal = FinancialGoal(
+        user_id=current_user.id,
+        name=data["name"],
+        target_amount=data["target_amount"],
+        target_date=datetime.strptime(data["target_date"], "%Y-%m-%d").date(),
+    )
+
+    db.session.add(new_goal)
+    db.session.commit()
+
+    return jsonify({"message": "Financial goal added successfully!", "goal": new_goal.to_dict()}), 201
+
     
 
 @auth.route('/logout')

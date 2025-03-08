@@ -51,7 +51,8 @@ class FinancialGoal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)  # Name of the goal
-    amount = db.Column(db.Float, nullable=False)  # Target amount
+    current_amount = db.Column(db.Float, default=0)  # Current amount
+    target_amount = db.Column(db.Float, nullable=False)  # Target amount
     target_date = db.Column(db.Date, nullable=False)  # Target completion date
     added_on = db.Column(db.DateTime, default=db.func.current_timestamp())
 
@@ -63,7 +64,8 @@ class FinancialGoal(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "name": self.name,
-            "amount": self.amount,
+            "current_amount": self.current_amount,
+            "target_amount": self.target_amount,
             "target_date": self.target_date,
             "added_on": self.added_on,
         }

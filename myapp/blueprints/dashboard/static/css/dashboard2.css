@@ -180,6 +180,12 @@ h1 {
     color: var(--success-color);
 }
 
+.start-date, .target-date {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
@@ -198,10 +204,6 @@ h1 {
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-
-
-
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

@@ -39,7 +39,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 <div>
-                                    <div class="stats-value text-success" id="pnl"></div>
+                                    <div class="stats-value text-success" id="pnl">$0</div>
                                     <span class="badge badge-success" id="returns">
                                         <i class="bi bi-arrow-up"></i>
                                     </span>
@@ -64,10 +64,15 @@
 
         <!-- Financial Goals -->
         <div class="row g-4 mb-4" id="financialGoals">
-            <div class="col-md-3">
+            {# <div class="col-md-3">
                 <div class="card">
                     <div class="card-body">
                         <div class="card-title mb-3">Retirement Fund</div>
+                        <!-- Dates -->
+                        <div class="d-flex justify-content-between mb-2 text-muted">
+                            <span class="start-date"><span>Jan 1, 2022</span></span>
+                            <span class="target-date"><span>Dec 31, 2030</span></span>
+                        </div>
                         <div class="progress mb-2" style="height: 8px;">
                             <div class="progress-bar" role="progressbar" style="width: 40%"></div>
                         </div>
@@ -105,7 +110,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> #}
         </div>
 
         <!-- Portfolios Table -->
@@ -155,8 +160,8 @@
                                 <input type="number" class="form-control" id="goalTarget" required>
                             </div>
                             <div class="mb-3">
-                                <label for="goalCurrent" class="form-label">Current Savings</label>
-                                <input type="number" class="form-control" id="goalCurrent" required>
+                                <label for="goalTargetDate" class="form-label">Target Date</label>
+                                <input type="date" class="form-control" id="goalTargetDate" required>
                             </div>
                             <button type="submit" class="btn btn-success">Add Goal</button>
                         </form>
@@ -170,6 +175,7 @@
 {% block custom_js %}
     <script>
         const user_portfolios = {{ user_portfolios|tojson|safe }};
+        const financial_goals = {{ financial_goals|tojson|safe }};
     </script>
     <script src="{{url_for('dashboard.static', filename='js/dashboard.js')}}"></script>
 {% endblock custom_js %}

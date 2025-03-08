@@ -1,42 +1,75 @@
 $(document).ready(function() {
 
+    // Set today's date as the minimum selectable date
+    let today = new Date().toLocaleDateString('en-CA');
+    $("#goalTargetDate").attr("min", today);
+
+    // Handle add financial goal button
     $("#addGoalForm").submit(function(event) {
         event.preventDefault();
 
         // Get input values
-        const goalName = $("#goalName").val();
-        const goalTarget = parseFloat($("#goalTarget").val());
-        const goalCurrent = parseFloat($("#goalCurrent").val());
-
-        // Calculate progress percentage
-        const progressPercentage = (goalCurrent / goalTarget) * 100;
+        const name = $("#goalName").val();
+        const targetAmount = parseFloat($("#goalTarget").val());
+        const currentDate = new Date().toLocaleDateString('en-CA');
+        const targetDate = $("#goalTargetDate").val();
 
         // Create new goal card
-        const newGoal = `
+        const newGoal =
+        `
             <div class="col-md-3">
                 <div class="card">
                     <div class="card-body">
-                        <div class="card-title mb-3">${goalName}</div>
-                        <div class="progress mb-2" style="height: 8px;">
-                            <div class="progress-bar" role="progressbar" style="width: ${progressPercentage}%"></div>
+                        <div class="card-title mb-3">${name}</div>
+                        <!-- Start & Target Dates -->
+                        <div class="d-flex justify-content-between mb-2 text-muted">
+                            <span class="start-date">${formatDate(currentDate)}</span>
+                            <span class="target-date">${formatDate(targetDate)}</span>
                         </div>
+                        <!-- Progress Bar -->
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                        </div>
+                        <!-- Amounts -->
                         <div class="d-flex justify-content-between">
-                            <span class="stats-label">$${goalCurrent.toFixed(2)}</span>
-                            <span class="stats-label text-end">$${goalTarget.toFixed(2)}</span>
+                            <span class="stats-label">$0</span>
+                            <span class="stats-label text-end">$${targetAmount.toLocaleString()}</span>
                         </div>
                     </div>
                 </div>
             </div>
         `;
 
-        // Append to financial goals section
-        $("#financialGoals").append(newGoal);
+        // Create FinancialGoal object to save to server 
+        let financialGoal = {
+            name: name,
+            target_amount: targetAmount,
+            target_date: targetDate,
+        };
 
-        // Close modal
-        $("#addGoalModal").modal("hide");
+        $.ajax({
+            type: "POST",
+            url: "/auth/add-financial-goal",
+            contentType: "application/json",
+            data: JSON.stringify(financialGoal),
+            success: function (response) {
+                alert("Financial goal added successfully!");
 
-        // Clear form fields
-        $("#addGoalForm")[0].reset();
+                // Append to financial goals section
+                $("#financialGoals").append(newGoal);
+
+                // Close modal
+                $("#addGoalModal").modal("hide");
+
+                // Clear form fields
+                $("#addGoalForm")[0].reset();
+
+                location.reload(); // Reload to update the UI
+            },
+            error: function (xhr) {
+                alert("Error adding financial goal: " + xhr.responseText);
+            }
+        });
     });
 
     // AJAX to fetch latest user portfolio data to update dashboard 
@@ -128,6 +161,46 @@ $(document).ready(function() {
             tbody.append(row);
         });
     }
+
+    // Add financial goals from db
+    const financialGoalsContainer = $("#financialGoals");
+    financialGoalsContainer.empty();
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDate().toString().padStart(2, '0');  // Ensures 2-digit day
+        const month = date.toLocaleString('en-US', { month: 'short' }); // Short month name
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    financial_goals.forEach(goal=>{
+        let goalCard = `
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-title mb-3">${goal.name}</div>
+                        <!-- Start & Target Dates -->
+                        <div class="d-flex justify-content-between mb-2 text-muted">
+                            <span class="start-date">${formatDate(goal.added_on)}</span>
+                            <span class="target-date">${formatDate(goal.target_date)}</span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="progress mb-2" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: ${goal.current_amount / goal.target_amount * 100}%;"></div>
+                        </div>
+                        <!-- Amounts -->
+                        <div class="d-flex justify-content-between">
+                            <span class="stats-label">$${goal.current_amount.toLocaleString()}</span>
+                            <span class="stats-label text-end">$${goal.target_amount.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        financialGoalsContainer.append(goalCard);
+    }); 
 
     // Initial data fetch
     fetchPortfolioData();

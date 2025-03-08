@@ -2,8 +2,8 @@ from flask import render_template, request, redirect, url_for, Blueprint, jsonif
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.orm import joinedload
 
-from myapp.blueprints.auth.models import User
-from myapp.blueprints.portfolio.models import UserPortfolio, Portfolio
+from myapp.blueprints.auth.models import FinancialGoal
+from myapp.blueprints.portfolio.models import UserPortfolio
 from myapp.app import db
 
 dashboard = Blueprint('dashboard', __name__, template_folder='templates', static_folder='static')
@@ -13,10 +13,13 @@ dashboard = Blueprint('dashboard', __name__, template_folder='templates', static
 def index():
     # Get all UserPortfolios belonging to current user
     user_portfolios = UserPortfolio.query.options(joinedload(UserPortfolio.portfolio)).filter_by(user_id=current_user.id).all()
-
     user_portfolios_dict = [up.to_dict() for up in user_portfolios]
 
-    return render_template('dashboard/dashboard.html', username=current_user.username, user_portfolios=user_portfolios_dict)
+    # Get all FinancialGoals belonging to current user
+    financial_goals = FinancialGoal.query.filter_by(user_id=current_user.id).all()
+    financial_goals_dict = [fg.to_dict() for fg in financial_goals]
+
+    return render_template('dashboard/dashboard.html', username=current_user.username, user_portfolios=user_portfolios_dict, financial_goals=financial_goals_dict)
 
 
 @dashboard.route('/get_user_portfolios', methods=['POST'])
