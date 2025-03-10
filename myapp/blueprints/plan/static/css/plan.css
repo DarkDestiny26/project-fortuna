@@ -247,6 +247,42 @@ header p {
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
+/* Modal Styling */
+.modal-content {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 1.25rem 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1.25rem 1.5rem;
+}
+
+.alert {
+    border-radius: 0.75rem;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+.alert-success {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 8px;

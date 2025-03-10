@@ -15,7 +15,7 @@
                 <p>Track your monthly expenses </p>
             </div>
             <div class="d-flex gap-3 align-items-center">
-                <button class="btn btn-primary" type="button">
+                <button class="btn btn-primary" type="button" id="viewReportBtn">
                     <i class="bi bi-magic"></i> View AI Report
                 </button>
                 <button class="btn btn-primary" type="button">
@@ -46,7 +46,7 @@
                             <canvas id="incomeChart"></canvas>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-4 px-5">
-                            <div>
+                            <div class="text-center">
                                 <p class="mb-0 text-muted fs-6">Income</p>
                                 <h3 class="positive">$5,000</h3>
                             </div>
@@ -54,7 +54,7 @@
                                 <p class="mb-0 text-muted fs-6">Balance</p>
                                 <h3 class="positive">+$1,800</h3>
                             </div>
-                            <div class="text-end">
+                            <div class="text-center">
                                 <p class="mb-0 text-muted fs-6">Expenses</p>
                                 <h3 class="negative">$3,200</h3>
                             </div>
@@ -84,7 +84,7 @@
                 <span>Recent Transactions</span>
                     <div class="d-flex gap-2">
                         <button class="btn btn-primary" type="button">
-                            <i class="bi bi-plus"></i> Add Transaction
+                            <i class="bi bi-plus"></i> Upload Transactions
                         </button>
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -117,6 +117,65 @@
             </div>
             <div class="card-footer bg-white text-end py-3">
                 <button class="btn btn-outline-primary">View All Transactions</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Report Modal -->
+    <div class="modal fade" id="aiReportModal" tabindex="-1" aria-labelledby="aiReportModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header d-flex align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary bg-opacity-10 p-2 rounded-circle me-3">
+                            <i class="bi bi-robot text-primary fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title mb-0" id="aiReportModalLabel">AI Financial Analysis Report</h5>
+                            <small class="text-secondary">Generated on March 11, 2025</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success mb-4">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <strong>Good news!</strong> Your savings rate has increased by 5% compared to last month.
+                    </div>
+
+                    <h5 class="border-bottom pb-2 mb-3">Summary</h5>
+                    <p>Based on your financial data, you're doing well in several areas but have some opportunities for improvement. Your income is stable, and you're saving 36% of your income, which is excellent compared to the recommended 20%.</p>
+
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Spending Patterns</h5>
+                    <p>Your top spending categories are:</p>
+                    <ol>
+                        <li><strong>Housing (37.5%)</strong>: Your housing costs are within the recommended range of 30-40% of your budget.</li>
+                        <li><strong>Food (18.8%)</strong>: Your food spending is slightly higher than the recommended 10-15%. Consider meal planning to reduce costs.</li>
+                        <li><strong>Transportation (12.5%)</strong>: This is in line with the recommended 10-15% allocation.</li>
+                    </ol>
+                    
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">Recommendations</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Optimize Food Budget</h6>
+                            <p class="card-text">Your restaurant spending accounts for about 42% of your total food budget. Reducing dining out by just one meal per week could save approximately $250 per month.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-piggy-bank-fill text-success me-2"></i>Increase Emergency Fund</h6>
+                            <p class="card-text">Your current savings would cover approximately 2.3 months of expenses. Consider allocating an additional $300 per month to reach the recommended 6-month emergency fund.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Investment Opportunity</h6>
+                            <p class="card-text">With your current savings rate, you could increase your retirement contributions by 3% without significantly impacting your lifestyle, potentially adding $150,000 to your retirement fund over 20 years.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -180,6 +180,13 @@ $(document).ready(function() {
         });
     }
 
+    // AI-related button handlers
+    $('#viewReportBtn').on('click', function() {
+        // Show the AI report modal
+        const aiReportModal = new bootstrap.Modal(document.getElementById('aiReportModal'));
+        aiReportModal.show();
+    });
+
     // Initialize the transactions table
     populateTransactions();
     
