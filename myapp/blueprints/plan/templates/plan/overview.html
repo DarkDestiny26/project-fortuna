@@ -1,0 +1,127 @@
+{% extends "home.html" %}
+
+{% block title %} Plan - Fortuna Wealth Management{% endblock title %}
+
+{% block custom_css %}
+    <link href="{{ url_for('plan.static', filename='css/plan.css') }}" rel="stylesheet">
+{% endblock custom_css %}
+
+
+{% block content %}
+    <div class="content flex-grow-1 p-4">
+        <header class="pb-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Financial Planner</h1>
+                <p>Track your monthly expenses </p>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <button class="btn btn-primary" type="button">
+                    <i class="bi bi-magic"></i> View AI Report
+                </button>
+                <button class="btn btn-primary" type="button">
+                    <i class="bi bi-stars"></i> Optimise Budget with AI
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="monthDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        March 2025
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="monthDropdown">
+                        <li><a class="dropdown-item" href="#">March 2025</a></li>
+                        <li><a class="dropdown-item" href="#">February 2025</a></li>
+                        <li><a class="dropdown-item" href="#">January 2025</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-4 mb-5">
+            <!-- Income vs Expenses Bar Chart -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Monthly Overview</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="incomeChart"></canvas>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-4 px-5">
+                            <div>
+                                <p class="mb-0 text-muted fs-6">Income</p>
+                                <h3 class="positive">$5,000</h3>
+                            </div>
+                            <div class="text-center">
+                                <p class="mb-0 text-muted fs-6">Balance</p>
+                                <h3 class="positive">+$1,800</h3>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-muted fs-6">Expenses</p>
+                                <h3 class="negative">$3,200</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expense Categories Pie Chart -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Expenses Breakdown</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Recent Transactions</span>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-primary" type="button">
+                            <i class="bi bi-plus"></i> Add Transaction
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                                <li><a class="dropdown-item" href="#">All Transactions</a></li>
+                                <li><a class="dropdown-item" href="#">Income Only</a></li>
+                                <li><a class="dropdown-item" href="#">Expenses Only</a></li>
+                            </ul>
+                        </div>
+                    </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <!-- Transaction rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer bg-white text-end py-3">
+                <button class="btn btn-outline-primary">View All Transactions</button>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block custom_js %}
+  <script src="{{url_for('plan.static', filename='js/plan.js')}}"></script>
+{% endblock custom_js %}
