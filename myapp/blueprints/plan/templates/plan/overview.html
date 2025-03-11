@@ -82,21 +82,24 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Recent Transactions</span>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-primary" type="button">
-                            <i class="bi bi-plus"></i> Upload Transactions
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" type="button" id="uploadBtn">
+                        <i class="bi bi-plus"></i> Upload Transactions
+                    </button>
+                    <button class="btn btn-outline-danger" type="button" id="removeBtn">
+                        <i class="bi bi-trash"></i> Remove Transactions
+                    </button>
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            Filter
                         </button>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Filter
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                                <li><a class="dropdown-item" href="#">All Transactions</a></li>
-                                <li><a class="dropdown-item" href="#">Income Only</a></li>
-                                <li><a class="dropdown-item" href="#">Expenses Only</a></li>
-                            </ul>
-                        </div>
+                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                            <li><a class="dropdown-item" href="#">All Transactions</a></li>
+                            <li><a class="dropdown-item" href="#">Income Only</a></li>
+                            <li><a class="dropdown-item" href="#">Expenses Only</a></li>
+                        </ul>
                     </div>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -175,6 +178,41 @@
                             <p class="card-text">With your current savings rate, you could increase your retirement contributions by 3% without significantly impacting your lifestyle, potentially adding $150,000 to your retirement fund over 20 years.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Upload Modal -->
+    <div class="modal fade" id="csvUploadModal" tabindex="-1" aria-labelledby="csvUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="csvUploadModalLabel">Import Transactions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary mb-3">Upload a CSV file with your transactions to automatically import them into your financial planner.</p>
+                    
+                    <form id="csvUploadForm">
+                        <div class="mb-3">
+                            <label for="csvFile" class="form-label">CSV File</label>
+                            <input class="form-control" type="file" id="csvFile" accept=".csv">
+                            <div class="form-text">
+                                Your CSV should have these columns: Date, Description, Category, Amount
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <div>
+                                <small>We currently only support exports from DBS bank</small>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="importBtn">Import Transactions</button>
                 </div>
             </div>
         </div>

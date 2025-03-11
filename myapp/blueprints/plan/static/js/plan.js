@@ -12,15 +12,16 @@ $(document).ready(function() {
     };
 
     const expenseCategories = {
-        labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Other'],
+        labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Shopping', 'Other'],
         datasets: [{
-            data: [1200, 600, 400, 300, 250, 450],
+            data: [1200, 600, 400, 300, 250, 200, 250],
             backgroundColor: [
                 'rgba(96, 165, 250, 0.8)',
                 'rgba(52, 211, 153, 0.8)',
                 'rgba(167, 139, 250, 0.8)',
                 'rgba(251, 191, 36, 0.8)',
                 'rgba(244, 114, 182, 0.8)',
+                'rgba(236, 72, 153, 0.8)',
                 'rgba(148, 163, 184, 0.8)'
             ],
             borderWidth: 1
@@ -189,5 +190,64 @@ $(document).ready(function() {
 
     // Initialize the transactions table
     populateTransactions();
+
+    // Upload transaction button handlers
+    $('#uploadBtn').on('click', function() {
+        // Show the CSV upload modal
+        const csvUploadModal = new bootstrap.Modal(document.getElementById('csvUploadModal'));
+        csvUploadModal.show();
+    });
+
+    $('#importBtn').on('click', function() {
+        // Import CSV functionality
+        importCSV();
+    });
+
+    $('#previewBtn').on('click', function() {
+         // Preview CSV functionality
+         previewCSV();
+    });
+
+
+     // CSV file handling
+     $('#csvFile').on('change', function(e) {
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+            // In a real app, you might want to show the filename
+            console.log(`File selected: ${fileName}`);
+        }
+    });
+    
+    // Remove transactions button
+    $('#removeBtn').on('click', function() {
+        if (confirm('Are you sure you want to remove all transactions for this period?')) {
+            // In a real app, this would delete the transactions
+            alert('Transactions removed successfully');
+            
+            // Clear the transactions table (in this demo)
+            $('#transactionsTable').empty();
+        }
+    });
+    
+    // Import CSV function
+    function importCSV() {
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a CSV file first.');
+            return;
+        }
+        
+        // In a real app, you would process the file and add transactions
+        alert('Transactions imported successfully!');
+        
+        // Close the modal
+        const csvUploadModal = bootstrap.Modal.getInstance(document.getElementById('csvUploadModal'));
+        csvUploadModal.hide();
+        
+        // Refresh the transaction list (in a real app)
+        // refreshTransactionList();
+    }
     
 });

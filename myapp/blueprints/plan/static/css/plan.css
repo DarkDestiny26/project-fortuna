@@ -160,6 +160,11 @@ header p {
     color: #7209b7;
 }
 
+.badge-shopping {
+    background-color: rgba(236, 72, 153, 0.15);
+    color: #ec4899;
+}
+
 .badge-other {
     background-color: rgba(72, 149, 239, 0.15);
     color: #4895ef;
@@ -215,6 +220,17 @@ header p {
     background-color: #f1f5f9;
     color: var(--text-primary);
     border-color: #e2e8f0;
+}
+
+.btn-outline-danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: white;
 }
 
 .btn-group .btn {
