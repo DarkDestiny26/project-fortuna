@@ -191,33 +191,33 @@ $(document).ready(function() {
     // Initialize the transactions table
     populateTransactions();
 
-    // Upload transaction button handlers
-    $('#uploadBtn').on('click', function() {
-        // Show the CSV upload modal
-        const csvUploadModal = new bootstrap.Modal(document.getElementById('csvUploadModal'));
-        csvUploadModal.show();
-    });
+    // Upload CSV to database
+    $("#importBtn").click(function() {
+        var fileInput = $("#csvFile")[0].files[0];  // Get the selected file
 
-    $('#importBtn').on('click', function() {
-        // Import CSV functionality
-        importCSV();
-    });
-
-    $('#previewBtn').on('click', function() {
-         // Preview CSV functionality
-         previewCSV();
-    });
-
-
-     // CSV file handling
-     $('#csvFile').on('change', function(e) {
-        const fileName = e.target.files[0]?.name;
-        if (fileName) {
-            // In a real app, you might want to show the filename
-            console.log(`File selected: ${fileName}`);
+        if (!fileInput) {
+            alert('Please select a CSV file first.');
+            return;
         }
+
+        var formData = new FormData();
+        formData.append("file", fileInput);  // Append the file to FormData
+
+        $.ajax({
+            url: "upload_csv",  // Flask route
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                alert(`${response.message}`);
+            },
+            error: function(xhr, status, error) {
+                alert(`${xhr.responseText}`);
+            }
+        });
     });
-    
+
     // Remove transactions button
     $('#removeBtn').on('click', function() {
         if (confirm('Are you sure you want to remove all transactions for this period?')) {
@@ -228,26 +228,5 @@ $(document).ready(function() {
             $('#transactionsTable').empty();
         }
     });
-    
-    // Import CSV function
-    function importCSV() {
-        const fileInput = document.getElementById('csvFile');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            alert('Please select a CSV file first.');
-            return;
-        }
-        
-        // In a real app, you would process the file and add transactions
-        alert('Transactions imported successfully!');
-        
-        // Close the modal
-        const csvUploadModal = bootstrap.Modal.getInstance(document.getElementById('csvUploadModal'));
-        csvUploadModal.hide();
-        
-        // Refresh the transaction list (in a real app)
-        // refreshTransactionList();
-    }
     
 });

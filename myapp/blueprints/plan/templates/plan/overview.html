@@ -83,7 +83,7 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span>Recent Transactions</span>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-primary" type="button" id="uploadBtn">
+                    <button class="btn btn-primary" type="button" id="uploadBtn" data-bs-toggle="modal" data-bs-target="#csvUploadModal">
                         <i class="bi bi-plus"></i> Upload Transactions
                     </button>
                     <button class="btn btn-outline-danger" type="button" id="removeBtn">
@@ -188,7 +188,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="csvUploadModalLabel">Import Transactions</h5>
+                    <h5 class="modal-title" id="csvUploadModalLabel">Upload Transactions</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -199,20 +199,20 @@
                             <label for="csvFile" class="form-label">CSV File</label>
                             <input class="form-control" type="file" id="csvFile" accept=".csv">
                             <div class="form-text">
-                                Your CSV should have these columns: Date, Description, Category, Amount
+                                Your CSV should have these columns: Transaction Date, Value Date, Statement Code, Reference, Debit Amount, Credit Amount, Client Reference, Additional Reference, Misc Reference
                             </div>
                         </div>
                         
                         <div class="alert alert-info d-flex align-items-center" role="alert">
                             <i class="bi bi-info-circle-fill me-2"></i>
                             <div>
-                                <small>We currently only support exports from DBS bank</small>
+                                <small>We currently only support transactions from DBS bank</small>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="importBtn">Import Transactions</button>
+                    <button type="button" class="btn btn-primary" id="importBtn">Upload</button>
                 </div>
             </div>
         </div>

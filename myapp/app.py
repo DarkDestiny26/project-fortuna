@@ -15,6 +15,12 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
     app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
+    # Configure UPLOAD_FOLDER globally
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+
+    # Ensure the folder exists
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
     db.init_app(app)
 
     login_manager = LoginManager()
