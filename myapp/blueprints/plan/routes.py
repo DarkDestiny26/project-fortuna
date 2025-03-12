@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, Blueprint, jsonify, current_app
+from flask import render_template, request, redirect, url_for, Blueprint, jsonify, current_app, make_response
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.orm import joinedload
 
@@ -70,13 +70,29 @@ def upload_csv():
     for _, row in df.iterrows():
         # Convert date columns to proper format
         transaction_date = datetime.strptime(row["Transaction Date"], "%d-%b-%y") if pd.notna(row["Transaction Date"]) else None
-    
+
+        # Convert amounts safely, handling missing or non-numeric values
+        debit_amount = None
+        credit_amount = None
+
+        if pd.notna(row["Debit Amount"]):
+            try:
+                debit_amount = float(row["Debit Amount"])
+            except ValueError:
+                debit_amount = None  # If conversion fails, set to None
+
+        if pd.notna(row["Credit Amount"]):
+            try:
+                credit_amount = float(row["Credit Amount"])
+            except ValueError:
+                credit_amount = None
+
         new_transaction = Transaction(
             user_id=current_user.id,
             transaction_date=transaction_date,
-            debit_amount=float(row["Debit Amount"]) if pd.notna(row["Debit Amount"]) and row["Debit Amount"].strip() != '' else None,
-            credit_amount=float(row["Credit Amount"]) if pd.notna(row["Credit Amount"]) and row["Credit Amount"].strip() != '' else None,
-            description=row["Client Reference"],
+            debit_amount=debit_amount,
+            credit_amount=credit_amount,
+            description=row["Client Reference"] if pd.notna(row["Client Reference"]) else "",
             category=None  # Classification happens later
         )
         transactions.append(new_transaction)
@@ -90,8 +106,13 @@ def upload_csv():
         file_path = os.path.join(upload_folder, filename)
         os.remove(file_path)
 
-    return jsonify({
+    # ✅ Convert NaN values to None (JSON-safe)
+    response_data = {
         "message": f"{len(transactions)} transactions saved successfully.",
-        "next_step": "/classify_transactions"
-    })
+        "transactions": [transaction.to_dict() for transaction in transactions]
+    }
+
+    response = make_response(jsonify(response_data))
+    response.headers["Content-Type"] = "application/json"  # ✅ Explicitly set JSON response type
+    return response
 

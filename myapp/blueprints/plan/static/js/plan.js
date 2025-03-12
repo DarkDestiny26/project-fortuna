@@ -1,16 +1,4 @@
 $(document).ready(function() {
-    // Sample data
-    const incomeData = {
-        labels: ['Income', 'Expenses'],
-        datasets: [{
-            label: 'Amount ($)',
-            data: [5000, 3200],
-            backgroundColor: ['rgba(74, 222, 128, 0.8)', 'rgba(248, 113, 113, 0.8)'],
-            borderColor: ['rgb(34, 197, 94)', 'rgb(239, 68, 68)'],
-            borderWidth: 1
-        }]
-    };
-
     const expenseCategories = {
         labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Shopping', 'Other'],
         datasets: [{
@@ -28,76 +16,116 @@ $(document).ready(function() {
         }]
     };
 
-    // const transactions = [
-    //     { id: 1, date: '2025-03-01', description: 'Rent Payment', category: 'Housing', amount: -1200 },
-    //     { id: 2, date: '2025-03-02', description: 'Grocery Store', category: 'Food', amount: -87.45 },
-    //     { id: 3, date: '2025-03-03', description: 'Gas Station', category: 'Transportation', amount: -45.50 },
-    //     { id: 4, date: '2025-03-05', description: 'Salary Deposit', category: 'Income', amount: 2500 },
-    //     { id: 5, date: '2025-03-08', description: 'Restaurant', category: 'Food', amount: -62.35 },
-    //     { id: 6, date: '2025-03-10', description: 'Movie Tickets', category: 'Entertainment', amount: -32.00 },
-    //     { id: 7, date: '2025-03-15', description: 'Electric Bill', category: 'Utilities', amount: -78.90 },
-    //     { id: 8, date: '2025-03-20', description: 'Salary Deposit', category: 'Income', amount: 2500 },
-    //     { id: 9, date: '2025-03-22', description: 'Clothing Store', category: 'Other', amount: -124.50 },
-    //     { id: 10, date: '2025-03-25', description: 'Phone Bill', category: 'Utilities', amount: -85.00 }
-    // ];
+    function calculateIncomeExpense(data) {
+        let totalIncome = 0;
+        let totalExpense = 0;
+
+        data.forEach(transaction => {
+            if (transaction.credit_amount) {
+                totalIncome += transaction.credit_amount;
+            }
+            if (transaction.debit_amount) {
+                totalExpense += transaction.debit_amount;
+            }
+        });
+
+        return { totalIncome, totalExpense };
+    }
+
+
+    function updateIncomeChart(chart, data) {
+        const { totalIncome, totalExpense } = calculateIncomeExpense(data);
+
+        // Update chart data
+        chart.data.datasets[0].data = [totalIncome, totalExpense];
+        chart.options.scales.y.max = Math.max(totalIncome, totalExpense) * 1.2; // Adjust max scale dynamically
+        chart.update();
+
+        const balance = totalIncome - totalExpense;
+
+        // Format numbers without decimals
+        let formatNumber = (num) => num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+        // Update value of Income, Expenses and Balance
+        $(".text-center:contains('Income') h3").text(`$${formatNumber(totalIncome)}`);
+        $(".text-center:contains('Expenses') h3").text(`$${formatNumber(totalExpense)}`);
+        $(".text-center:contains('Balance') h3").text(
+            balance >= 0 ? `+$${formatNumber(balance)}` : `-$${formatNumber(Math.abs(balance))}`
+        );
+
+        // Update color for Balance
+        const balanceElement = $(".text-center:contains('Balance') h3");
+        balanceElement.removeClass("positive negative").addClass(balance >= 0 ? "positive" : "negative");
+    }
+
 
     // Initialize Income vs Expenses Bar Chart
-    const incomeChart = new Chart(
-        document.getElementById('incomeChart'),
-        {
-            type: 'bar',
-            data: incomeData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 6000,
-                        grid: {
-                            display: true,
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value;
-                            }
-                        }
+    const ctx = document.getElementById('incomeChart').getContext('2d');
+    const incomeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Income', 'Expenses'],
+            datasets: [{
+                label: 'Amount ($)',
+                data: [0, 0], // Placeholder data, will be updated dynamically
+                backgroundColor: ['rgba(74, 222, 128, 0.8)', 'rgba(248, 113, 113, 0.8)'],
+                borderColor: ['rgb(34, 197, 94)', 'rgb(239, 68, 68)'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 6000, // Default, will be updated dynamically
+                    grid: {
+                        display: true,
+                        color: 'rgba(0, 0, 0, 0.05)'
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value;
                         }
                     }
                 },
-                plugins: {
-                    legend: {
+                x: {
+                    grid: {
                         display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        titleColor: '#2b2d42',
-                        bodyColor: '#2b2d42',
-                        borderColor: 'rgba(0, 0, 0, 0.1)',
-                        borderWidth: 1,
-                        cornerRadius: 10,
-                        padding: 12,
-                        boxPadding: 6,
-                        usePointStyle: true,
-                        callbacks: {
-                            label: function(context) {
-                                return '$' + context.parsed.y.toLocaleString();
-                            }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#2b2d42',
+                    bodyColor: '#2b2d42',
+                    borderColor: 'rgba(0, 0, 0, 0.1)',
+                    borderWidth: 1,
+                    cornerRadius: 10,
+                    padding: 12,
+                    boxPadding: 6,
+                    usePointStyle: true,
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.parsed.y.toLocaleString();
                         }
                     }
-                },
-                barThickness: 40,
-                borderRadius: 6,
-                categoryPercentage: 0.8,
-                barPercentage: 0.7
-            }
+                }
+            },
+            barThickness: 40,
+            borderRadius: 6,
+            categoryPercentage: 0.8,
+            barPercentage: 0.7
         }
-    );
+    });
+
+    // Update the chart with actual transaction data
+    updateIncomeChart(incomeChart, transactions);
 
     // Initialize Expense Categories Pie Chart
     const expenseChart = new Chart(
@@ -152,13 +180,14 @@ $(document).ready(function() {
     }
     
     // Populate Transactions Table
-    function populateTransactions(transactions) {
+    function populateTransactionsTable(transactions) {
         $('#transactionsTable').empty(); // Clear previous entries
 
         // Sort transactions by date in descending order
         transactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
 
-        transactions.forEach(function(transaction) {
+        // Show only the latest 10 transactions
+        transactions.slice(0, 10).forEach(function(transaction) {
             const amount = transaction.credit_amount ? transaction.credit_amount : transaction.debit_amount;
             const amountClass = transaction.credit_amount ? 'positive' : 'negative';
             const amountSign = transaction.credit_amount ? '+' : '-';
@@ -200,7 +229,7 @@ $(document).ready(function() {
             filteredTransactions = transactions.filter(t => t.debit_amount !== null);
         }
 
-        populateTransactions(filteredTransactions);
+        populateTransactionsTable(filteredTransactions);
 
         // Update the filter dropdown button text
         $("#filterDropdown").text(`${filterType}`);
@@ -214,7 +243,7 @@ $(document).ready(function() {
     });
 
     // Initialize the transactions table
-    populateTransactions(transactions);
+    populateTransactionsTable(transactions);
 
     // Upload CSV to database
     $("#importBtn").click(function() {
@@ -235,12 +264,25 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(response) {
+                console.log(response.message);
                 alert(`${response.message}`);
+                transactions = response.transactions;
+                updateIncomeChart(incomeChart, transactions);
+                populateTransactionsTable(transactions);
+                $("#csvUploadModal").modal('hide');
             },
             error: function(xhr, status, error) {
-                alert(`${xhr.responseText}`);
-            }
-        });
+                console.error("❌ AJAX Error:", status, error);
+                console.error("Response Text:", xhr.responseText);
+
+                try {
+                    let responseJSON = JSON.parse(xhr.responseText); // ✅ Try parsing response manually
+                    alert(`Error: ${responseJSON.message}`);
+                } catch (e) {
+                    alert("Unknown error occurred.");
+                }
+                    }
+            });
     });
 
     // Remove transactions button
