@@ -28,18 +28,18 @@ $(document).ready(function() {
         }]
     };
 
-    const transactions = [
-        { id: 1, date: '2025-03-01', description: 'Rent Payment', category: 'Housing', amount: -1200 },
-        { id: 2, date: '2025-03-02', description: 'Grocery Store', category: 'Food', amount: -87.45 },
-        { id: 3, date: '2025-03-03', description: 'Gas Station', category: 'Transportation', amount: -45.50 },
-        { id: 4, date: '2025-03-05', description: 'Salary Deposit', category: 'Income', amount: 2500 },
-        { id: 5, date: '2025-03-08', description: 'Restaurant', category: 'Food', amount: -62.35 },
-        { id: 6, date: '2025-03-10', description: 'Movie Tickets', category: 'Entertainment', amount: -32.00 },
-        { id: 7, date: '2025-03-15', description: 'Electric Bill', category: 'Utilities', amount: -78.90 },
-        { id: 8, date: '2025-03-20', description: 'Salary Deposit', category: 'Income', amount: 2500 },
-        { id: 9, date: '2025-03-22', description: 'Clothing Store', category: 'Other', amount: -124.50 },
-        { id: 10, date: '2025-03-25', description: 'Phone Bill', category: 'Utilities', amount: -85.00 }
-    ];
+    // const transactions = [
+    //     { id: 1, date: '2025-03-01', description: 'Rent Payment', category: 'Housing', amount: -1200 },
+    //     { id: 2, date: '2025-03-02', description: 'Grocery Store', category: 'Food', amount: -87.45 },
+    //     { id: 3, date: '2025-03-03', description: 'Gas Station', category: 'Transportation', amount: -45.50 },
+    //     { id: 4, date: '2025-03-05', description: 'Salary Deposit', category: 'Income', amount: 2500 },
+    //     { id: 5, date: '2025-03-08', description: 'Restaurant', category: 'Food', amount: -62.35 },
+    //     { id: 6, date: '2025-03-10', description: 'Movie Tickets', category: 'Entertainment', amount: -32.00 },
+    //     { id: 7, date: '2025-03-15', description: 'Electric Bill', category: 'Utilities', amount: -78.90 },
+    //     { id: 8, date: '2025-03-20', description: 'Salary Deposit', category: 'Income', amount: 2500 },
+    //     { id: 9, date: '2025-03-22', description: 'Clothing Store', category: 'Other', amount: -124.50 },
+    //     { id: 10, date: '2025-03-25', description: 'Phone Bill', category: 'Utilities', amount: -85.00 }
+    // ];
 
     // Initialize Income vs Expenses Bar Chart
     const incomeChart = new Chart(
@@ -152,23 +152,30 @@ $(document).ready(function() {
     }
     
     // Populate Transactions Table
-    function populateTransactions() {
+    function populateTransactions(transactions) {
+        $('#transactionsTable').empty(); // Clear previous entries
+
+        // Sort transactions by date in descending order
+        transactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
+
         transactions.forEach(function(transaction) {
-            const amountClass = transaction.amount >= 0 ? 'positive' : 'negative';
-            const amountSign = transaction.amount >= 0 ? '+' : '-';
-            const formattedAmount = amountSign + '$' + Math.abs(transaction.amount).toFixed(2);
-            const formattedDate = formatDate(transaction.date);
+            const amount = transaction.credit_amount ? transaction.credit_amount : transaction.debit_amount;
+            const amountClass = transaction.credit_amount ? 'positive' : 'negative';
+            const amountSign = transaction.credit_amount ? '+' : '-';
+            const formattedAmount = amountSign + '$' + Math.abs(amount).toFixed(2);
+            const formattedDate = formatDate(transaction.transaction_date);
             
             // Determine badge class based on category
             let badgeClass = 'badge-other';
-            switch(transaction.category.toLowerCase()) {
-                case 'housing': badgeClass = 'badge-housing'; break;
-                case 'food': badgeClass = 'badge-food'; break;
-                case 'transportation': badgeClass = 'badge-transportation'; break;
-                case 'entertainment': badgeClass = 'badge-entertainment'; break;
-                case 'utilities': badgeClass = 'badge-utilities'; break;
-                case 'income': badgeClass = 'badge-income'; break;
-            }
+            // switch(transaction.category.toLowerCase()) {
+            //     case 'housing': badgeClass = 'badge-housing'; break;
+            //     case 'food': badgeClass = 'badge-food'; break;
+            //     case 'transportation': badgeClass = 'badge-transportation'; break;
+            //     case 'entertainment': badgeClass = 'badge-entertainment'; break;
+            //     case 'utilities': badgeClass = 'badge-utilities'; break;
+            //     case 'income': badgeClass = 'badge-income'; break;
+            //     case 'shopping': badgeClass = 'badge-shopping'; break;
+            // }
             
             $('#transactionsTable').append(`
                 <tr>
@@ -181,6 +188,24 @@ $(document).ready(function() {
         });
     }
 
+    // Filter Transactions and Update Dropdown Button Text
+    $(".dropdown-menu").on("click", ".dropdown-item", function (e) {
+        e.preventDefault();
+        let filterType = $(this).text().trim();
+        
+        let filteredTransactions = transactions;
+        if (filterType === "Income Only") {
+            filteredTransactions = transactions.filter(t => t.credit_amount !== null);
+        } else if (filterType === "Expenses Only") {
+            filteredTransactions = transactions.filter(t => t.debit_amount !== null);
+        }
+
+        populateTransactions(filteredTransactions);
+
+        // Update the filter dropdown button text
+        $("#filterDropdown").text(`${filterType}`);
+    });
+
     // AI-related button handlers
     $('#viewReportBtn').on('click', function() {
         // Show the AI report modal
@@ -189,7 +214,7 @@ $(document).ready(function() {
     });
 
     // Initialize the transactions table
-    populateTransactions();
+    populateTransactions(transactions);
 
     // Upload CSV to database
     $("#importBtn").click(function() {

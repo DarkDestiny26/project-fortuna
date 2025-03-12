@@ -91,7 +91,7 @@
                     </button>
                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            Filter
+                            All Transactions
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="filterDropdown">
                             <li><a class="dropdown-item" href="#">All Transactions</a></li>
@@ -220,5 +220,8 @@
 {% endblock content %}
 
 {% block custom_js %}
-  <script src="{{url_for('plan.static', filename='js/plan.js')}}"></script>
+    <script src="{{url_for('plan.static', filename='js/plan.js')}}"></script>
+    <script>
+        const transactions = {{ transactions|tojson|safe }};
+    </script>
 {% endblock custom_js %}

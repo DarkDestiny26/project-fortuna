@@ -15,12 +15,11 @@ plan = Blueprint('plan', __name__, template_folder='templates', static_folder='s
 @plan.route('/')
 @login_required
 def index():
-    return render_template('plan/overview.html')
+    # Get all Transactions belonging to current user
+    transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    transactions_dict = [transaction.to_dict() for transaction in transactions]
 
-ALLOWED_EXTENSIONS = {'csv'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return render_template('plan/overview.html', transactions=transactions_dict)
 
 
 @plan.route("/upload_csv", methods=["POST"])
@@ -29,6 +28,11 @@ def upload_csv():
     """
     Endpoint to upload a CSV file and store transactions in the database.
     """
+    ALLOWED_EXTENSIONS = {'csv'}
+
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
 

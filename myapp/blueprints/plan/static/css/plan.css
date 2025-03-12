@@ -120,12 +120,12 @@ header p {
 }
 
 .positive {
-    color: var(--success-color);
+    color: var(--success-color) !important;
     font-weight: 700;
 }
 
 .negative {
-    color: var(--warning-color);
+    color: var(--warning-color) !important;
     font-weight: 700;
 }
 
