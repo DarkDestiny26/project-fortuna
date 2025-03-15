@@ -125,7 +125,7 @@ def upload_csv():
 def submit_classification_batch():
     client = OpenAI()
 
-    # Get all Transactions belonging to current user that are not classified
+    # Get all debit Transactions belonging to current user that are not classified
     transactions = Transaction.query.filter(Transaction.category == None, Transaction.debit_amount > 0,
                                             Transaction.user_id == current_user.id).all()
 
@@ -148,7 +148,7 @@ Output a json object containing the following information:
             "method": "POST",
             "url": "/v1/chat/completions",
             "body": {
-                "model": "gpt-4o-mini",
+                "model": "gpt-4o",
                 "temperature": 0,
                 "response_format": { 
                     "type": "json_object"
@@ -232,8 +232,8 @@ def process_classification_batch():
     except FileNotFoundError:
         return jsonify({"error": f"{result_file_name} could not found at {upload_folder}"}), 400
 
-    transactions = []
     # Updating category of classified Trasctions
+    transactions = []
     for res in results:
         task_id = res['custom_id']        
         transaction_id = task_id.split('-')[-1] # Getting transaction id from task id
@@ -249,4 +249,4 @@ def process_classification_batch():
         os.remove(file_path)
 
     return jsonify({"message": f"All {len(results)} transactions have been classified",
-                    "transactions": transactions}), 200
+                    "transactions": [transaction.to_dict() for transaction in transactions]}), 200

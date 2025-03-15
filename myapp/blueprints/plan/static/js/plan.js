@@ -1,6 +1,6 @@
 $(document).ready(function() {
     const expenseCategories = {
-        labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Shopping', 'Other'],
+        labels: ['Housing', 'Food', 'Transportation', 'Entertainment', 'Utilities', 'Shopping', 'Others'],
         datasets: [{
             data: [1200, 600, 400, 300, 250, 200, 250],
             backgroundColor: [
@@ -34,7 +34,7 @@ $(document).ready(function() {
         dropdownMenu.empty(); // Clear existing items
 
         months.forEach(month => {
-            dropdownMenu.append(`<li><a class="dropdown-item" href="#">${month}</a></li>`);
+            dropdownMenu.append(`<li><a class="dropdown-item">${month}</a></li>`);
         });
 
         // Set default selection to the most recent month
@@ -61,33 +61,6 @@ $(document).ready(function() {
 
         return { totalIncome, totalExpense };
     }
-
-
-    function updateIncomeChart(chart, data) {
-        const { totalIncome, totalExpense } = calculateIncomeExpense(data);
-
-        // Update chart data
-        chart.data.datasets[0].data = [totalIncome, totalExpense];
-        chart.options.scales.y.max = Math.round(Math.max(totalIncome, totalExpense) * 1.2); // Adjust max scale dynamically
-        chart.update();
-
-        const balance = totalIncome - totalExpense;
-
-        // Format numbers without decimals
-        let formatNumber = (num) => num.toLocaleString(undefined, { maximumFractionDigits: 0 });
-
-        // Update value of Income, Expenses and Balance
-        $(".text-center:contains('Income') h3").text(`$${formatNumber(totalIncome)}`);
-        $(".text-center:contains('Expenses') h3").text(`$${formatNumber(totalExpense)}`);
-        $(".text-center:contains('Balance') h3").text(
-            balance >= 0 ? `+$${formatNumber(balance)}` : `-$${formatNumber(Math.abs(balance))}`
-        );
-
-        // Update color for Balance
-        const balanceElement = $(".text-center:contains('Balance') h3");
-        balanceElement.removeClass("positive negative").addClass(balance >= 0 ? "positive" : "negative");
-    }
-
 
     // Initialize Income vs Expenses Bar Chart
     const ctx = document.getElementById('incomeChart').getContext('2d');
@@ -154,6 +127,31 @@ $(document).ready(function() {
         }
     });
 
+    function updateIncomeChart(chart, data) {
+        const { totalIncome, totalExpense } = calculateIncomeExpense(data);
+
+        // Update chart data
+        chart.data.datasets[0].data = [totalIncome, totalExpense];
+        chart.options.scales.y.max = Math.round(Math.max(totalIncome, totalExpense) * 1.2); // Adjust max scale dynamically
+        chart.update();
+
+        const balance = totalIncome - totalExpense;
+
+        // Format numbers without decimals
+        let formatNumber = (num) => num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+        // Update value of Income, Expenses and Balance
+        $(".text-center:contains('Income') h3").text(`$${formatNumber(totalIncome)}`);
+        $(".text-center:contains('Expenses') h3").text(`$${formatNumber(totalExpense)}`);
+        $(".text-center:contains('Balance') h3").text(
+            balance >= 0 ? `+$${formatNumber(balance)}` : `-$${formatNumber(Math.abs(balance))}`
+        );
+
+        // Update color for Balance
+        const balanceElement = $(".text-center:contains('Balance') h3");
+        balanceElement.removeClass("positive negative").addClass(balance >= 0 ? "positive" : "negative");
+    }
+
 
     // Initialize Expense Categories Pie Chart
     const expenseChart = new Chart(
@@ -201,6 +199,27 @@ $(document).ready(function() {
         }
     );
 
+    function updateExpenseChart(chart, transactions) {
+        let categorySums = {
+            'Housing': 0, 'Food': 0, 'Transportation': 0, 'Entertainment': 0, 'Utilities': 0, 'Shopping': 0, 'Others': 0
+        };
+        // Aggregate transaction amounts by category
+        transactions.forEach(transaction => {
+            if(transaction.category){
+                // Convert first letter to uppercase
+                category = transaction.category.charAt(0).toUpperCase() + transaction.category.slice(1);
+                if (category in categorySums) {
+                    categorySums[category] += transaction.debit_amount || 0;
+                } else {
+                    categorySums['Others'] += transaction.debit_amount || 0;
+                }
+            }
+        });
+        // Update chart data
+        chart.data.datasets[0].data = Object.values(categorySums);
+        chart.update();
+    }
+
     function filterTransactionsByMonth(monthYear) {
         // Extract month and year from the selected dropdown text
         const [monthName, year] = monthYear.split(" ");
@@ -220,6 +239,7 @@ $(document).ready(function() {
 
         // Update charts and table with filtered data
         updateIncomeChart(incomeChart, filteredTransactions);
+        updateExpenseChart(expenseChart, filteredTransactions);
         populateTransactionsTable(filteredTransactions);
     }
 
@@ -330,18 +350,6 @@ $(document).ready(function() {
             data: formData,
             contentType: false,
             processData: false,
-            success: function(response) {
-                console.log(response.message);
-                alert(`${response.message}`);
-                // Update table & charts
-                transactions = response.transactions;
-                updateIncomeChart(incomeChart, transactions);
-                populateTransactionsTable(transactions);
-                populateMonthDropdown();
-                // defaultMonth = $("#monthDropdown").text().trim();
-                // updateDashboard(defaultMonth);
-                $("#csvUploadModal").modal('hide');
-            },
             error: function(xhr, status, error) {
                 console.error("AJAX Error:", status, error);
                 console.error("Response Text:", xhr.responseText);
@@ -352,50 +360,51 @@ $(document).ready(function() {
                     alert("Unknown error occurred.");
                 }
             }
-        })//.then((response)=>{
-        //     console.log(response.message);
-        //     // alert(`${response.message}`);
-        //     // Update table & charts
-        //     transactions = response.transactions;
-        //     updateIncomeChart(incomeChart, transactions);
-        //     populateTransactionsTable(transactions);
-        //     $("#csvUploadModal").modal('hide');
+        }).then((response)=>{
+            console.log(response.message);
+            alert(`${response.message}`);
+            // Update table & charts
+            transactions = response.transactions;
+            populateMonthDropdown();
+            defaultMonth = $("#monthDropdown").text().trim();
+            updateDashboard(defaultMonth);
+            $("#csvUploadModal").modal('hide');
 
-        //     // 2nd AJAX call to Flask backend for calling Batch API
-        //     console.log("start uploading batch data to OpenAI API...");
-        //     return $.ajax({
-        //         url: "submit_classification_batch",
-        //         type: "POST",
-        //         dataType: "json",
-        //         // success:(response)=>{
-        //         //     console.log(response.message);
-        //         // },
-        //         error:(xhr, status, error)=>{
-        //             console.error("AJAX Error:", status, error);
-        //             console.error("Response Text:", xhr.responseText);
-        //         }
-        //     });
-        // }).always((response)=>{
-        //     console.log(response.message);
+            // 2nd AJAX call to Flask backend for calling Batch API
+            console.log("start uploading batch data to OpenAI API...");
+            return $.ajax({
+                url: "submit_classification_batch",
+                type: "POST",
+                dataType: "json",
+                error:(xhr, status, error)=>{
+                    console.error("AJAX Error:", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                }
+            });
+        }).always((response)=>{
+            console.log(response.message);
 
-        //     // 3rd AJAX call to Flask backend for updating transaction categories
-        //     console.log("Start updating database with transaction categories...");
-        //     return $.ajax({
-        //         url: "process_classification_batch",
-        //         type: "POST",
-        //         dataType: "json",
-        //         success:(response)=>{
-        //             console.log(response.message);
-        //             alert(`${response.message}`);
-        //             transactions = response.transactions;
-        //             populateTransactionsTable(transactions);
-        //         },
-        //         error:(xhr, status, error)=>{
-        //             console.error("AJAX Error:", status, error);
-        //             console.error("Response Text:", xhr.responseText);
-        //         }
-        //     });
-        // });
+            // 3rd AJAX call to Flask backend for updating transaction categories
+            console.log("Start updating database with transaction categories...");
+            return $.ajax({
+                url: "process_classification_batch",
+                type: "POST",
+                dataType: "json",
+                success:(response)=>{
+                    // Update table & charts
+                    transactions = response.transactions;
+                    defaultMonth = $("#monthDropdown").text().trim();
+                    updateDashboard(defaultMonth);
+
+                    console.log(response.message);
+                    alert(`${response.message}`);
+                },
+                error:(xhr, status, error)=>{
+                    console.error("AJAX Error:", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                }
+            });
+        });
     });
 
     // Remove transactions button
