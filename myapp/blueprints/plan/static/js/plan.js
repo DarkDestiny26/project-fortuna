@@ -16,6 +16,36 @@ $(document).ready(function() {
         }]
     };
 
+    function getUniqueMonths(transactions) {
+        let monthSet = new Set();
+        
+        transactions.forEach(transaction => {
+            const date = new Date(transaction.transaction_date);
+            const monthYear = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+            monthSet.add(monthYear);
+        });
+
+        return Array.from(monthSet).sort((a, b) => new Date(a) - new Date(b)).reverse();
+    }
+
+    function populateMonthDropdown() {
+        const months = getUniqueMonths(transactions);
+        const dropdownMenu = $("#monthDropdown .dropdown-menu");
+        dropdownMenu.empty(); // Clear existing items
+
+        months.forEach(month => {
+            dropdownMenu.append(`<li><a class="dropdown-item" href="#">${month}</a></li>`);
+        });
+
+        // Set default selection to the most recent month
+        if (months.length > 0) {
+            $("#monthDropdownBtn").text(months[0]);
+        }
+    }
+
+    // Populate the dropdown dynamically
+    populateMonthDropdown();
+
     function calculateIncomeExpense(data) {
         let totalIncome = 0;
         let totalExpense = 0;
@@ -38,7 +68,7 @@ $(document).ready(function() {
 
         // Update chart data
         chart.data.datasets[0].data = [totalIncome, totalExpense];
-        chart.options.scales.y.max = Math.max(totalIncome, totalExpense) * 1.2; // Adjust max scale dynamically
+        chart.options.scales.y.max = Math.round(Math.max(totalIncome, totalExpense) * 1.2); // Adjust max scale dynamically
         chart.update();
 
         const balance = totalIncome - totalExpense;
@@ -124,8 +154,6 @@ $(document).ready(function() {
         }
     });
 
-    // Update the chart with actual transaction data
-    updateIncomeChart(incomeChart, transactions);
 
     // Initialize Expense Categories Pie Chart
     const expenseChart = new Chart(
@@ -173,6 +201,47 @@ $(document).ready(function() {
         }
     );
 
+    function filterTransactionsByMonth(monthYear) {
+        // Extract month and year from the selected dropdown text
+        const [monthName, year] = monthYear.split(" ");
+        const monthIndex = new Date(`${monthName} 1, ${year}`).getMonth() + 1; // Get month index (1-based)
+
+        // Filter transactions matching the selected month and year
+        const filteredTransactions = transactions.filter(transaction => {
+            const transactionDate = new Date(transaction.transaction_date);
+            return transactionDate.getMonth() + 1 === monthIndex && transactionDate.getFullYear() === parseInt(year);
+        });
+
+        return filteredTransactions;
+    }
+
+    function updateDashboard(monthYear) {
+        let filteredTransactions = filterTransactionsByMonth(monthYear);
+
+        // Update charts and table with filtered data
+        updateIncomeChart(incomeChart, filteredTransactions);
+        populateTransactionsTable(filteredTransactions);
+    }
+
+    // Handle Month Dropdown Selection
+    $("#monthDropdown .dropdown-menu").on("click", ".dropdown-item", function (e) {
+        e.preventDefault();
+        let selectedMonth = $(this).text().trim();
+
+        // Update month dropdown button text
+        $("#monthDropdownBtn").text(selectedMonth);
+
+        // Reset table dropdown button text to 'All Transactions'
+        $("#tableDropdownBtn").text('All Transactions');
+
+        // Update the dashboard with filtered data
+        updateDashboard(selectedMonth);
+    });
+
+    // Initial Data Load (Default to first month in dropdown)
+    let defaultMonth = $("#monthDropdownBtn").text().trim();
+    updateDashboard(defaultMonth);
+
     // Format date to more readable format
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -218,21 +287,21 @@ $(document).ready(function() {
     }
 
     // Filter Transactions and Update Dropdown Button Text
-    $(".dropdown-menu").on("click", ".dropdown-item", function (e) {
+    $("#tableDropdown .dropdown-menu").on("click", ".dropdown-item", function (e) {
         e.preventDefault();
         let filterType = $(this).text().trim();
-        
-        let filteredTransactions = transactions;
+        let monthYear = $("#monthDropdownBtn").text().trim();
+        let filteredTransactions = filterTransactionsByMonth(monthYear);
         if (filterType === "Income Only") {
-            filteredTransactions = transactions.filter(t => t.credit_amount !== null);
+            filteredTransactions = filteredTransactions.filter(t => t.credit_amount !== null);
         } else if (filterType === "Expenses Only") {
-            filteredTransactions = transactions.filter(t => t.debit_amount !== null);
+            filteredTransactions = filteredTransactions.filter(t => t.debit_amount !== null);
         }
 
         populateTransactionsTable(filteredTransactions);
 
         // Update the filter dropdown button text
-        $("#filterDropdown").text(`${filterType}`);
+        $("#tableDropdownBtn").text(`${filterType}`);
     });
 
     // AI-related button handlers
@@ -242,8 +311,6 @@ $(document).ready(function() {
         aiReportModal.show();
     });
 
-    // Initialize the transactions table
-    populateTransactionsTable(transactions);
 
     // Upload CSV to database
     $("#importBtn").click(function() {
@@ -270,6 +337,9 @@ $(document).ready(function() {
                 transactions = response.transactions;
                 updateIncomeChart(incomeChart, transactions);
                 populateTransactionsTable(transactions);
+                populateMonthDropdown();
+                // defaultMonth = $("#monthDropdown").text().trim();
+                // updateDashboard(defaultMonth);
                 $("#csvUploadModal").modal('hide');
             },
             error: function(xhr, status, error) {
@@ -282,50 +352,50 @@ $(document).ready(function() {
                     alert("Unknown error occurred.");
                 }
             }
-        }).then((response)=>{
-            console.log(response.message);
-            // alert(`${response.message}`);
-            // Update table & charts
-            transactions = response.transactions;
-            updateIncomeChart(incomeChart, transactions);
-            populateTransactionsTable(transactions);
-            $("#csvUploadModal").modal('hide');
+        })//.then((response)=>{
+        //     console.log(response.message);
+        //     // alert(`${response.message}`);
+        //     // Update table & charts
+        //     transactions = response.transactions;
+        //     updateIncomeChart(incomeChart, transactions);
+        //     populateTransactionsTable(transactions);
+        //     $("#csvUploadModal").modal('hide');
 
-            // 2nd AJAX call to Flask backend for calling Batch API
-            console.log("start uploading batch data to OpenAI API...");
-            return $.ajax({
-                url: "submit_classification_batch",
-                type: "POST",
-                dataType: "json",
-                // success:(response)=>{
-                //     console.log(response.message);
-                // },
-                error:(xhr, status, error)=>{
-                    console.error("AJAX Error:", status, error);
-                    console.error("Response Text:", xhr.responseText);
-                }
-            });
-        }).always((response)=>{
-            console.log(response.message);
+        //     // 2nd AJAX call to Flask backend for calling Batch API
+        //     console.log("start uploading batch data to OpenAI API...");
+        //     return $.ajax({
+        //         url: "submit_classification_batch",
+        //         type: "POST",
+        //         dataType: "json",
+        //         // success:(response)=>{
+        //         //     console.log(response.message);
+        //         // },
+        //         error:(xhr, status, error)=>{
+        //             console.error("AJAX Error:", status, error);
+        //             console.error("Response Text:", xhr.responseText);
+        //         }
+        //     });
+        // }).always((response)=>{
+        //     console.log(response.message);
 
-            // 3rd AJAX call to Flask backend for updating transaction categories
-            console.log("Start updating database with transaction categories...");
-            return $.ajax({
-                url: "process_classification_batch",
-                type: "POST",
-                dataType: "json",
-                success:(response)=>{
-                    console.log(response.message);
-                    alert(`${response.message}`);
-                    transactions = response.transactions;
-                    populateTransactionsTable(transactions);
-                },
-                error:(xhr, status, error)=>{
-                    console.error("AJAX Error:", status, error);
-                    console.error("Response Text:", xhr.responseText);
-                }
-            });
-        });
+        //     // 3rd AJAX call to Flask backend for updating transaction categories
+        //     console.log("Start updating database with transaction categories...");
+        //     return $.ajax({
+        //         url: "process_classification_batch",
+        //         type: "POST",
+        //         dataType: "json",
+        //         success:(response)=>{
+        //             console.log(response.message);
+        //             alert(`${response.message}`);
+        //             transactions = response.transactions;
+        //             populateTransactionsTable(transactions);
+        //         },
+        //         error:(xhr, status, error)=>{
+        //             console.error("AJAX Error:", status, error);
+        //             console.error("Response Text:", xhr.responseText);
+        //         }
+        //     });
+        // });
     });
 
     // Remove transactions button

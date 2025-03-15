@@ -21,14 +21,14 @@
                 <button class="btn btn-primary" type="button">
                     <i class="bi bi-stars"></i> Optimise Budget with AI
                 </button>
-                <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="monthDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        March 2025
+                <div class="dropdown" id="monthDropdown">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="monthDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                        Select Month
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="monthDropdown">
-                        <li><a class="dropdown-item" href="#">March 2025</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="monthDropdownBtn">
+                        {# <li><a class="dropdown-item" href="#">March 2025</a></li>
                         <li><a class="dropdown-item" href="#">February 2025</a></li>
-                        <li><a class="dropdown-item" href="#">January 2025</a></li>
+                        <li><a class="dropdown-item" href="#">January 2025</a></li> #}
                     </ul>
                 </div>
             </div>
@@ -89,11 +89,11 @@
                     <button class="btn btn-outline-danger" type="button" id="removeBtn">
                         <i class="bi bi-trash"></i> Remove Transactions
                     </button>
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div class="dropdown" id="tableDropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="tableDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
                             All Transactions
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <ul class="dropdown-menu" aria-labelledby="tableDropdownBtn">
                             <li><a class="dropdown-item" href="#">All Transactions</a></li>
                             <li><a class="dropdown-item" href="#">Income Only</a></li>
                             <li><a class="dropdown-item" href="#">Expenses Only</a></li>
