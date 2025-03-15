@@ -155,5 +155,6 @@ def add_portfolio():
 
         return jsonify({"status": "success", "message": "Portfolio added successfully!"})
     
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500

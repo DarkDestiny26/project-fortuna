@@ -186,8 +186,7 @@ $(document).ready(function() {
         // Sort transactions by date in descending order
         transactions.sort((a, b) => new Date(b.transaction_date) - new Date(a.transaction_date));
 
-        // Show only the latest 10 transactions
-        transactions.slice(0, 10).forEach(function(transaction) {
+        transactions.forEach(function(transaction) {
             const amount = transaction.credit_amount ? transaction.credit_amount : transaction.debit_amount;
             const amountClass = transaction.credit_amount ? 'positive' : 'negative';
             const amountSign = transaction.credit_amount ? '+' : '-';
@@ -196,16 +195,17 @@ $(document).ready(function() {
             
             // Determine badge class based on category
             let badgeClass = 'badge-other';
-            // switch(transaction.category.toLowerCase()) {
-            //     case 'housing': badgeClass = 'badge-housing'; break;
-            //     case 'food': badgeClass = 'badge-food'; break;
-            //     case 'transportation': badgeClass = 'badge-transportation'; break;
-            //     case 'entertainment': badgeClass = 'badge-entertainment'; break;
-            //     case 'utilities': badgeClass = 'badge-utilities'; break;
-            //     case 'income': badgeClass = 'badge-income'; break;
-            //     case 'shopping': badgeClass = 'badge-shopping'; break;
-            // }
-            
+            if(transaction.category){
+                switch(transaction.category.toLowerCase()) {
+                    case 'housing': badgeClass = 'badge-housing'; break;
+                    case 'food': badgeClass = 'badge-food'; break;
+                    case 'transportation': badgeClass = 'badge-transportation'; break;
+                    case 'entertainment': badgeClass = 'badge-entertainment'; break;
+                    case 'utilities': badgeClass = 'badge-utilities'; break;
+                    case 'income': badgeClass = 'badge-income'; break;
+                    case 'shopping': badgeClass = 'badge-shopping'; break;
+                }
+            }
             $('#transactionsTable').append(`
                 <tr>
                     <td class="text-nowrap">${formattedDate}</td>
@@ -266,23 +266,66 @@ $(document).ready(function() {
             success: function(response) {
                 console.log(response.message);
                 alert(`${response.message}`);
+                // Update table & charts
                 transactions = response.transactions;
                 updateIncomeChart(incomeChart, transactions);
                 populateTransactionsTable(transactions);
                 $("#csvUploadModal").modal('hide');
             },
             error: function(xhr, status, error) {
-                console.error("❌ AJAX Error:", status, error);
+                console.error("AJAX Error:", status, error);
                 console.error("Response Text:", xhr.responseText);
-
                 try {
-                    let responseJSON = JSON.parse(xhr.responseText); // ✅ Try parsing response manually
+                    let responseJSON = JSON.parse(xhr.responseText); // Try parsing response manually
                     alert(`Error: ${responseJSON.message}`);
                 } catch (e) {
                     alert("Unknown error occurred.");
                 }
-                    }
+            }
+        }).then((response)=>{
+            console.log(response.message);
+            // alert(`${response.message}`);
+            // Update table & charts
+            transactions = response.transactions;
+            updateIncomeChart(incomeChart, transactions);
+            populateTransactionsTable(transactions);
+            $("#csvUploadModal").modal('hide');
+
+            // 2nd AJAX call to Flask backend for calling Batch API
+            console.log("start uploading batch data to OpenAI API...");
+            return $.ajax({
+                url: "submit_classification_batch",
+                type: "POST",
+                dataType: "json",
+                // success:(response)=>{
+                //     console.log(response.message);
+                // },
+                error:(xhr, status, error)=>{
+                    console.error("AJAX Error:", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                }
             });
+        }).always((response)=>{
+            console.log(response.message);
+
+            // 3rd AJAX call to Flask backend for updating transaction categories
+            console.log("Start updating database with transaction categories...");
+            return $.ajax({
+                url: "process_classification_batch",
+                type: "POST",
+                dataType: "json",
+                success:(response)=>{
+                    console.log(response.message);
+                    alert(`${response.message}`);
+                    transactions = response.transactions;
+                    populateTransactionsTable(transactions);
+                },
+                error:(xhr, status, error)=>{
+                    console.error("AJAX Error:", status, error);
+                    console.error("Response Text:", xhr.responseText);
+                }
+            });
+        });
     });
 
     // Remove transactions button
