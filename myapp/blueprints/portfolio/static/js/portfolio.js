@@ -91,6 +91,10 @@ $(document).ready(function() {
         });
     });
 
+    $('#recommendBtn').on('click', ()=>{
+        $('#aiPortfolioModal').modal("show");
+    });
+
     // Update modal card content dynamically
     $('.open-modal').on('click', function () {
 

@@ -175,6 +175,7 @@ button:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .label {
@@ -257,7 +258,7 @@ button:hover {
 }
 
 
-/* Modal Styling */
+/* View details Modal Styling */
 .modal-content {
     border-radius: 15px;
     border: none;
@@ -325,6 +326,40 @@ button:hover {
 
 canvas {
     max-width: 100%;
+}
+
+/* AI recommender Modal styling */
+.asset-bar {
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.8rem 0 0.4rem;
+    display: flex;
+}
+
+.stocks { background-color: #4361ee; }
+.bonds { background-color: #3a0ca3; }
+.cash { background-color: #7209b7; }
+.alternatives { background-color: #f72585; }
+.crypto { background-color: #4cc9f0; }
+.reits { background-color: #560bad; }
+
+.disclaimer {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.intro-text {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1.25rem;
+
+    p {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 0.5rem;
+    }
 }
 
 @media (min-width: 768px) {
