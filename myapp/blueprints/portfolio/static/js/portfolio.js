@@ -93,6 +93,28 @@ $(document).ready(function() {
 
     $('#recommendBtn').on('click', ()=>{
         $('#aiPortfolioModal').modal("show");
+        $.ajax({
+            url: "get_recommended_portfolios",  
+            type: "POST",
+            dataType: "json",
+            success: function (response) {
+                // Create report with LLM response
+                const formattedDate = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric' });
+                $('#aiPortfolioModalDate').text("Generated on " + formattedDate);
+                $("#aiPortfolioModal .modal-body").html(generateModalContent(response));
+                $("#loadingOverlay").css("visibility", "hidden"); // Hide loading screen
+                $('#aiPortfolioModal').on('hidden.bs.modal', ()=>{
+                    $("#loadingOverlay").css("visibility", "visible"); // Show loading screen when modal is opened again
+                });
+            },
+            error: (xhr, status, error)=> {
+                console.error("AJAX Error:", status, error);
+                console.error("Response Text:", xhr.responseText);
+                alert(`${xhr.responseText}`);
+                $("#aiPortfolioModal").modal('hide');
+            }
+
+        });
     });
 
     // Update modal card content dynamically
@@ -164,4 +186,60 @@ $(document).ready(function() {
         });
     }
 
+    function generateModalContent(response){
+        // Convert response data into a dictionary for quick lookup
+        const responsePortfolioMap = Object.fromEntries(
+            response.portfolios.map(p => [p.name, p.reasons])
+        );
+
+        // Filter and map filteredPortfolios to only include those in the response object
+        filteredPortfolios = portfolios.filter(portfolio => responsePortfolioMap[portfolio.name]) // Keep only matching portfolios
+                            .map(portfolio => ({
+                                ...portfolio,
+                                reasons: responsePortfolioMap[portfolio.name] // Assign reasons
+                            }));
+
+        console.log(filteredPortfolios);
+
+        return modalBodyHtml = `
+        <div class="intro-text mb-4">
+            ${response.summary.map(text => `<p>${text}</p>`).join('')}
+        </div>
+        <div class="portfolio-container" style="grid-template-columns: 1fr">
+        ${filteredPortfolios.map(portfolio => `
+            <div class="portfolio-card">
+                <div class="card-header">
+                    <div class="portfolio-stats">
+                        <h3 class="portfolio-name">${portfolio.name}</h3>
+                    </div>
+                    <div class="labels-container">
+                        <span class="label risk-${portfolio.labels[0].text.split(" ")[0].toLowerCase()}">${portfolio.labels[0].text}</span>
+                        ${portfolio.labels.slice(1).map( label => `<span class="label">${label.text}</span>`).join(' ')}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <ul class="portfolio-description" style="">
+                            ${portfolio.reasons.map(desc => `<li style="font-size:0.95rem">${desc}</li>`).join('')}
+                        </ul>
+                        <div class="return-info">
+                            <div class="return-value">${portfolio.annual_returns.oneYear}%</div>
+                            <div class="return-label">Annual Return</div>
+                        </div>
+                    </div>
+                    <div class="asset-bar">
+                        ${portfolio.assets.map((asset, index) =>`<div class="asset-${index + 1}" style="width: ${asset.allocation}%;"></div>`).join('')}
+                    </div>
+                    <div class="labels-container">
+                        ${portfolio.assets.map((asset)=>`<div class="label">${asset.name} (${asset.allocation}%)</div>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('')}
+        </div>
+        <p class="disclaimer">
+            These recommendations are for informational purposes only. 
+            Please consult with a qualified financial advisor before making investment decisions.
+        </p>`;
+    }
 });

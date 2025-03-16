@@ -4,6 +4,7 @@ import json, yfinance as yf, pandas as pd
 from datetime import datetime
 
 from myapp.blueprints.portfolio.models import Portfolio, UserPortfolio
+from myapp.blueprints.auth.models import Questionaire
 from myapp.app import db
 
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
@@ -158,3 +159,90 @@ def add_portfolio():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@portfolio.route('/get_recommended_portfolios', methods=['POST'])
+@login_required
+def get_recommended_portfolios():
+
+    # Query all Portfolios from db
+    portfolios = Portfolio.query.all()
+    portfolio_list = [portfolio.to_dict() for portfolio in portfolios]  # Convert all portfolios to dict
+    portfolios_str = json.dumps(portfolio_list, indent=2)  # Convert dict into JSON str
+
+    # Define system prompt
+    system_prompt = '''
+Recommend financial portfolios to users based on their risk profile. 
+Use the provided risk profile to determine the most suitable financial portfolios for the user. Consider factors such as risk tolerance, investment goals, and time horizon.
+
+# Steps
+1. **Analyze Risk Profile**: Examine the user's risk tolerance, investment goals, and time horizon.
+2. **Portfolio Selection**: Match the user's profile with the given financial portfolios that align with their risk level and objectives.
+3. **Justification**: Provide a rationale for the recommended portfolios, explaining how they align with the user's risk profile.
+
+# Output instructions
+Provide the recommended financial portfolios in JSON format, including:
+- User's risk profile summary in 2-3 short sentences
+- Recommended portfolios
+- 2-3 short justifications for each recommendation, with reference to the user's risk profile
+
+# Portfolios\n''' + portfolios_str + '''\n# Example Output Format
+{
+  "summary":[
+    "Based on your financial profile and investment preferences, you exhibit a moderate risk tolerance, balancing growth opportunities with a cautious approach to downside risk.",
+    "You are open to market fluctuations but prefer a well-diversified portfolio to mitigate potential losses."
+    ],
+  "portfolios":[
+    {
+      "name":"Moderate Portfolio",
+      "reasons":[
+        "A moderate risk portfolio offers potential for growth while maintaining stability through diversification, reducing exposure to extreme market swings.",
+        "It provides a good balance between risk and reward, aiming for steady long-term gains without excessive volatility.",
+        "This approach allows flexibility to capitalize on market opportunities while cushioning against downturns, making it suitable for long-term financial goals."
+        ]
+    },
+    {
+      "name":"Conservative Portfolio",
+      "reasons":[
+        "A conservative portfolio prioritizes protecting your principal investment, making it ideal if you have a lower risk tolerance or a shorter time horizon.",
+        "It focuses on generating consistent returns through bonds and dividend-paying stocks, providing financial stability.",
+        "With minimal exposure to market fluctuations, a conservative portfolio reduces stress and ensures more predictable performance over time."
+        ]
+    }
+  ]
+}
+'''
+    
+    # Get risk profile of current user from questionaire answers
+    questionaire = Questionaire.query.filter_by(user_id=current_user.id).first()
+    
+    user_risk_profile=f'''
+1. The user plans to withdraw money from their investments in {questionaire.start_withdrawal} years
+2. Once the user begins withdrawing funds from their investments, they plan to spend all of the funds in {questionaire.spend_funds} years
+3. The user describes their knowledge of investments as {questionaire.knowledge}
+4. When investing, the user is willing to take {questionaire.risk} risks expecting to earn {questionaire.risk} returns
+5. The user owned or currently owns: {[asset for asset in questionaire.investments]}
+6. In a hypothetical scenario where the overall stock market lost 25% of its value and an individual stock investment that the user owns also lost 25% of its value, the user will {questionaire.decision}
+'''
+    from openai import OpenAI
+    client = OpenAI()
+
+    response = client.chat.completions.create(
+        model="o3-mini",
+        reasoning_effort="high",
+        response_format={ 
+            "type": "json_object"
+        },
+        messages=[
+            {
+                "role": "system",
+                "content": system_prompt
+            },
+            {
+                "role": "user",
+                "content": user_risk_profile
+            }
+        ],
+    )
+
+    return jsonify(eval(response.choices[0].message.content)), 200

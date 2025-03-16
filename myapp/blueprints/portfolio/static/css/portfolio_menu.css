@@ -274,13 +274,18 @@ button:hover {
     color: #2b2d42;
 }
 
-.modal-body .portfolio-description {
-    color: #6c757d;
-    margin-bottom: 1.5rem;
-    max-width: none;
-    padding: 0 0.8rem;
-    font-size: 1.2rem;
+.modal-body {
+    background-color: #f5f7fa;
+
+    .portfolio-description {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+        max-width: none;
+        padding: 0 0.8rem;
+        font-size: 1.2rem;
+    }
 }
+
 .allocation-chart-container {
     max-width: 500px;
     margin: 0 auto;
@@ -337,12 +342,15 @@ canvas {
     display: flex;
 }
 
-.stocks { background-color: #4361ee; }
-.bonds { background-color: #3a0ca3; }
-.cash { background-color: #7209b7; }
-.alternatives { background-color: #f72585; }
-.crypto { background-color: #4cc9f0; }
-.reits { background-color: #560bad; }
+.asset-1 { background-color: #4361ee; }
+.asset-2 { background-color: #3a0ca3; }
+.asset-3 { background-color: #7209b7; }
+.asset-4 { background-color: #f72585; }
+.asset-5 { background-color: #4cc9f0; }
+.asset-6 { background-color: #560bad; }
+.asset-7 { background-color: #9d5ee6;}
+.asset-8 { background-color: #B3ABE6;}
+
 
 .disclaimer {
     font-size: 0.8rem;
@@ -360,6 +368,17 @@ canvas {
         line-height: 1.6;
         margin-bottom: 0.5rem;
     }
+}
+
+/* Loading animation */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 1050;
 }
 
 @media (min-width: 768px) {

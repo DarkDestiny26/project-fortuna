@@ -74,7 +74,7 @@ def questionaire():
         if 'stocks' in request.form:
             investments.append('stocks')
         if 'international' in request.form:
-            investments.append('international')
+            investments.append('international securities')
 
         # Retrieve selected decision in case of market downturn
         decision = request.form.get('decision')
