@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, Blueprint, jsonify, current_app, make_response
 from flask_login import login_user, logout_user, current_user, login_required
 from sqlalchemy.orm import joinedload
+from sqlalchemy import func
 
 from myapp.blueprints.plan.models import Transaction
 from myapp.app import db
@@ -212,7 +213,6 @@ Output a json object containing the following information:
     return jsonify({"message": f"Batch job {batch_job.id} is completed and saved"}), 200
 
 
-
 @plan.route("/process_classification_batch", methods=["POST"])
 @login_required
 def process_classification_batch():
@@ -250,3 +250,124 @@ def process_classification_batch():
 
     return jsonify({"message": f"All {len(results)} transactions have been classified",
                     "transactions": [transaction.to_dict() for transaction in transactions]}), 200
+
+
+@plan.route("/generate_financial_report", methods=["POST"])
+@login_required
+def generate_financial_report():
+    def get_expense_breakdown(year:int, month:int, user_id:int):
+        # Query total expenses for the given month and year
+        total_expense = (
+            db.session.query(func.sum(Transaction.debit_amount))
+            .filter(
+                Transaction.user_id == user_id,
+                func.extract("year", Transaction.transaction_date) == year,
+                func.extract("month", Transaction.transaction_date) == month,
+                Transaction.debit_amount.isnot(None)  # Ensure we only count expenses
+            )
+            .scalar()
+        ) or 0  # Default to 0 if no expenses found
+
+        if total_expense == 0:
+            return []
+
+        # Query breakdown by category
+        breakdown = (
+            db.session.query(
+                Transaction.category,
+                func.sum(Transaction.debit_amount).label("dollar_amount")
+            )
+            .filter(
+                Transaction.user_id == user_id,
+                func.extract("year", Transaction.transaction_date) == year,
+                func.extract("month", Transaction.transaction_date) == month,
+                Transaction.debit_amount.isnot(None)
+            )
+            .group_by(Transaction.category)
+            .all()
+        )
+
+        # Format the results
+        breakdown_summary = [
+            {
+                "category": category if category else "others",
+                "dollar_amount": round(amount, 2),
+                "percentage": round((amount / total_expense) * 100, 2)
+            }
+            for category, amount in breakdown
+        ]
+
+        return breakdown_summary
+
+    def get_cashflow_summary(year:int, month:int, user_id:int):
+        # Query total income (credit transactions)
+        total_income = (
+            db.session.query(func.sum(Transaction.credit_amount))
+            .filter(
+                Transaction.user_id == user_id,
+                func.extract("year", Transaction.transaction_date) == year,
+                func.extract("month", Transaction.transaction_date) == month,
+                Transaction.credit_amount.isnot(None)
+            )
+            .scalar()
+        ) or 0  # Default to 0 if no income found
+
+        # Query total expenses (debit transactions)
+        total_expenses = (
+            db.session.query(func.sum(Transaction.debit_amount))
+            .filter(
+                Transaction.user_id == user_id,
+                func.extract("year", Transaction.transaction_date) == year,
+                func.extract("month", Transaction.transaction_date) == month,
+                Transaction.debit_amount.isnot(None)
+            )
+            .scalar()
+        ) or 0  # Default to 0 if no expenses found
+
+        return {
+            "income": round(total_income, 2),
+            "expenses": round(total_expenses, 2)
+        }
+
+    client = OpenAI()
+    summarise_system_prompt = '''
+You are a financial assistant specializing in analyzing financial behavior. Your goal is to summarize a user's spending habits based on the financial data provided by the user,
+while providing helpful financial advice for the user to save money. Answer like you are talking to the user. Use the provided numbers and statistics in your answer.
+Return your answer according to the following JSON structure and definitions:
+{
+'summary': str, //Comment on the user's spending habits in 2-3 sentences
+'spending':[{'name': str, //name of category
+'percentage': int, //percentage spent on the category
+'description': str //analysis of spending behaviour
+}] //List of top 3 categories that the user spent their money on.
+'recommendations':[{'title': str, //short title for the reccomendation
+'description': str, //reccomendation for the user to save money, in about 2-3 sentences
+'icon': str //Bootstrap icon class that is relevent to the header }] //List of 3 objects
+}
+'''
+    data = request.get_json()  # Parses the incoming JSON data
+
+    month = data.get("month")
+    year = data.get("year")
+
+    user_data=f"#Expenses breakdown\n{get_expense_breakdown(year, month, current_user.id)}\n#Monthly Cashflow:{get_cashflow_summary(year, month, current_user.id)}"
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        temperature=0,
+        response_format={ 
+            "type": "json_object"
+        },
+        messages=[
+            {
+                "role": "system",
+                "content": summarise_system_prompt
+            },
+            {
+                "role": "user",
+                "content": user_data
+            }
+        ],
+    )
+
+    return jsonify(eval(response.choices[0].message.content)), 200

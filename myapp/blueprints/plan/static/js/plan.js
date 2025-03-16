@@ -152,7 +152,6 @@ $(document).ready(function() {
         balanceElement.removeClass("positive negative").addClass(balance >= 0 ? "positive" : "negative");
     }
 
-
     // Initialize Expense Categories Pie Chart
     const expenseChart = new Chart(
         document.getElementById('expenseChart'),
@@ -324,14 +323,6 @@ $(document).ready(function() {
         $("#tableDropdownBtn").text(`${filterType}`);
     });
 
-    // AI-related button handlers
-    $('#viewReportBtn').on('click', function() {
-        // Show the AI report modal
-        const aiReportModal = new bootstrap.Modal(document.getElementById('aiReportModal'));
-        aiReportModal.show();
-    });
-
-
     // Upload CSV to database
     $("#importBtn").click(function() {
         var fileInput = $("#csvFile")[0].files[0];  // Get the selected file
@@ -417,5 +408,80 @@ $(document).ready(function() {
             $('#transactionsTable').empty();
         }
     });
+
+    // AJAX call to get LLM generated report
+    $("#viewReportBtn").on('click', ()=>{
+        $("#aiReportModal").modal("show"); 
+        let dateString = $("#monthDropdown").text().trim(); // Get the date input value (e.g., "March 2025")
+        if (dateString === "Select Month") {
+            alert("Please select a month before generating the report.");
+            return;
+        }
+        let { month, year } = parseMonthYear(dateString);
+        $.ajax({
+            url: "generate_financial_report",  
+            type: "POST",
+            contentType:"application/json",
+            data: JSON.stringify({ month: month, year: year }),
+            dataType: "json",
+            success: function (data) {
+                // Create report with LLM response
+                const formattedDate = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric' });
+                $("#aiReportModalDate").text("Generated on " + formattedDate);
+                $("#aiReportModal .modal-body").html(generateReportHTML(data));
+
+                $("#loadingOverlay").css("visibility", "hidden"); // Hide loading screen
+                $('#aiReportModal').on('hidden.bs.modal', ()=>{
+                    $("#loadingOverlay").css("visibility", "visible"); // Show loading screen when modal is opened again
+                });
+            },
+            error: (xhr, status, error)=> {
+                console.error("AJAX Error:", status, error);
+                console.error("Response Text:", xhr.responseText);
+                alert(`${xhr.responseText}`);
+                $("#aiReportModal").modal('hide');
+            }
+
+        });
+    });
+
+    function parseMonthYear(dateString) {
+        const months = {
+            "January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+            "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12
+        };
+
+        let parts = dateString.split(" "); // Split into ["Month", "Year"]
+        let month = months[parts[0]] || null;
+        let year = parseInt(parts[1]) || null;
+
+        return { month, year };
+    }
+
+    function generateReportHTML(data) {
+        return `
+            <h5 class="border-bottom pb-2 mb-3">Summary</h5>
+            <p>${data.summary || "No summary available."}</p>
+
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Spending Patterns</h5>
+            <p>Your top spending categories are:</p>
+            <ol>
+                ${data.spending.map(category => `
+                    <li><strong>${category.name.charAt(0).toUpperCase() + category.name.slice(1)} (${category.percentage}%)</strong>: ${category.description}</li>
+                `).join("")}
+            </ol>
+
+            <h5 class="border-bottom pb-2 mb-3 mt-4">Recommendations</h5>
+            ${data.recommendations.map(rec => `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title"><i class="bi ${rec.icon} text-primary me-2"></i>${rec.title}</h6>
+                        <p class="card-text">${rec.description}</p>
+                    </div>
+                </div>
+            `).join("")}
+        `;
+    }
+
     
 });
