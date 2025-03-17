@@ -1,0 +1,62 @@
+{% extends "home.html" %}
+
+{% block title %}Chatbot - Fortuna Wealth Management{% endblock title %}
+
+{% block custom_css %}
+    <link href="{{ url_for('chatbot.static', filename='css/chatbot.css') }}" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+{% endblock custom_css %}
+
+{% block content %}
+<div class="content flex-grow-1">
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1 class="chat-title">AI Financial Advisor</h1>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <!-- Bot welcome message -->
+            <div class="message-wrapper">
+                <div class="message-avatar d-flex align-items-center justify-content-center bg-primary text-white">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div>
+                    <div class="bot-info">
+                        <span class="bot-name">Fortuna</span>
+                    </div>
+                    <div class="message message-bot">
+                        Hello! I'm Fortuna, your personal AI financial advisor. How can I help you today with your wealth management journey?
+                        <div class="message-time">{{current_time}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none; margin: 0 0 15px 15px;">
+                <div class="message-avatar d-flex align-items-center justify-content-center bg-primary text-white">
+                    <i class="bi bi-robot"></i>
+                </div>
+                <div class="message message-bot" style="padding: 8px 15px;">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="messageInput" placeholder="Type your message here..." autocomplete="off">
+            <button class="send-button" id="sendButton">
+                <i data-lucide="send" size="20"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block custom_js %}
+    <script src="{{url_for('chatbot.static', filename='js/chatbot.js')}}"></script>
+{% endblock custom_js %}

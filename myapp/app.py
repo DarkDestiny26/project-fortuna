@@ -37,12 +37,14 @@ def create_app():
     from myapp.blueprints.dashboard.routes import dashboard
     from myapp.blueprints.portfolio.routes import portfolio
     from myapp.blueprints.plan.routes import plan
+    from myapp.blueprints.chatbot.routes import chatbot
     
     auth.bcrypt = Bcrypt(app)
     app.register_blueprint(auth, url_prefix='/auth')
     app.register_blueprint(dashboard, url_prefix='/home/dashboard')
     app.register_blueprint(portfolio, url_prefix='/home/portfolio')
     app.register_blueprint(plan, url_prefix='/home/plan')
+    app.register_blueprint(chatbot, url_prefix='/home/chatbot')
 
     migrate = Migrate(app, db)
 
