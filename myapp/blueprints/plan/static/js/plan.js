@@ -426,7 +426,14 @@ $(document).ready(function() {
             dataType: "json",
             success: function (data) {
                 // Create report with LLM response
-                const formattedDate = new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric' });
+                const formattedDate = new Intl.DateTimeFormat('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                }).format(new Date());
                 $("#aiReportModalDate").text("Generated on " + formattedDate);
                 $("#aiReportModal .modal-body").html(generateReportHTML(data));
 
