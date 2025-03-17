@@ -4,7 +4,7 @@ import json, yfinance as yf, pandas as pd
 from datetime import datetime
 
 from myapp.blueprints.portfolio.models import Portfolio, UserPortfolio
-from myapp.blueprints.auth.models import Questionaire
+from myapp.blueprints.auth.models import Questionaire, FinancialGoal
 from myapp.app import db
 
 portfolio = Blueprint('portfolio', __name__, template_folder='templates', static_folder='static')
@@ -172,42 +172,41 @@ def get_recommended_portfolios():
 
     # Define system prompt
     system_prompt = '''
-Recommend financial portfolios to users based on their risk profile. 
-Use the provided risk profile to determine the most suitable financial portfolios for the user. Consider factors such as risk tolerance, investment goals, and time horizon.
+Use the provided risk profile and financial goals to determine the most suitable financial portfolios for the user. Consider factors such as risk tolerance, financial goals, and time horizon.
 
 # Steps
-1. **Analyze Risk Profile**: Examine the user's risk tolerance, investment goals, and time horizon.
+1. **Analyze Risk Profile and Financial Goals**: Examine the user's risk tolerance, investment goals, and time horizon.
 2. **Portfolio Selection**: Match the user's profile with the given financial portfolios that align with their risk level and objectives.
-3. **Justification**: Provide a rationale for the recommended portfolios, explaining how they align with the user's risk profile.
+3. **Justification**: Provide a rationale for the recommended portfolios, explaining how they align with the user's risk profile and financial goals.
 
 # Output instructions
 Provide the recommended financial portfolios in JSON format, including:
 - User's risk profile summary in 2-3 short sentences
 - Recommended portfolios
-- 2-3 short justifications for each recommendation, with reference to the user's risk profile
+- 2-3 short justifications for each recommendation, with reference to the user's risk profile and financial goals
 
 # Portfolios\n''' + portfolios_str + '''\n# Example Output Format
 {
-  "summary":[
-    "Based on your financial profile and investment preferences, you exhibit a moderate risk tolerance, balancing growth opportunities with a cautious approach to downside risk.",
-    "You are open to market fluctuations but prefer a well-diversified portfolio to mitigate potential losses."
-    ],
-  "portfolios":[
+  "summary": [
+    "Based on your investment knowledge and willingness to take higher than average risks, you are comfortable with volatility over a medium-term horizon.",
+    "Your near-term objective of saving $2000 by mid-2025 for a new PC, combined with the longer-term goal of gathering $50000 by 2030 for a business startup, suggests a need for portfolios that balance growth potential with some risk mitigation."
+  ],
+  "portfolios": [
     {
-      "name":"Moderate Portfolio",
-      "reasons":[
-        "A moderate risk portfolio offers potential for growth while maintaining stability through diversification, reducing exposure to extreme market swings.",
-        "It provides a good balance between risk and reward, aiming for steady long-term gains without excessive volatility.",
-        "This approach allows flexibility to capitalize on market opportunities while cushioning against downturns, making it suitable for long-term financial goals."
-        ]
+      "name": "Core Four Portfolio",
+      "reasons": [
+        "This portfolio offers a diversified mix with a heavy equity allocation (domestic and international stocks) balanced by a meaningful bond component, which can help cushion short-term downturns while pursuing growth.",
+        "Its inclusion of a variety of asset classes aligns with your current holdings in stocks, bonds, and international securities, making it a well-rounded option for both near-term liquidity and longer-term appreciation.",
+        "The mix of 72% equities and 28% fixed income/reits provides a balance that supports your high risk tolerance while addressing your need for funds in 3-5 years."
+      ]
     },
     {
-      "name":"Conservative Portfolio",
-      "reasons":[
-        "A conservative portfolio prioritizes protecting your principal investment, making it ideal if you have a lower risk tolerance or a shorter time horizon.",
-        "It focuses on generating consistent returns through bonds and dividend-paying stocks, providing financial stability.",
-        "With minimal exposure to market fluctuations, a conservative portfolio reduces stress and ensures more predictable performance over time."
-        ]
+      "name": "Total Stock Market Portfolio",
+      "reasons": [
+        "This portfolio is fully exposed to equities, maximizing the potential for high returns, which suits your willingness to take on higher than average risk.",
+        "It is especially geared toward long-term growth, making it ideal for your goal of saving $50000 by 2030 to start a business.",
+        "Given that you stated you would remain undistracted during market downturns, the aggressive 100% equity approach can work well for the portion of your funds designated for long-term investing."
+      ]
     }
   ]
 }
@@ -217,13 +216,22 @@ Provide the recommended financial portfolios in JSON format, including:
     questionaire = Questionaire.query.filter_by(user_id=current_user.id).first()
     
     user_risk_profile=f'''
+# User risk profile
 1. The user plans to withdraw money from their investments in {questionaire.start_withdrawal} years
 2. Once the user begins withdrawing funds from their investments, they plan to spend all of the funds in {questionaire.spend_funds} years
 3. The user describes their knowledge of investments as {questionaire.knowledge}
 4. When investing, the user is willing to take {questionaire.risk} risks expecting to earn {questionaire.risk} returns
 5. The user owned or currently owns: {[asset for asset in questionaire.investments]}
-6. In a hypothetical scenario where the overall stock market lost 25% of its value and an individual stock investment that the user owns also lost 25% of its value, the user will {questionaire.decision}
+6. In a hypothetical scenario where the overall stock market lost 25% of its value and an individual stock investment that the user owns also lost 25% of its value, the user will {questionaire.decision}\n
 '''
+    
+    # Get financial goals of current user from questionaire answers
+    goals = FinancialGoal.query.filter_by(user_id=current_user.id).all()
+
+    user_financial_goals = "# User financial goals\n"
+    for i, goal in enumerate(goals):
+        user_financial_goals += f"{i+1}. The user wants to save ${goal.target_amount} by {goal.target_date.strftime("%#d %b %Y")} to {goal.name}\n"
+
     from openai import OpenAI
     client = OpenAI()
 
@@ -240,9 +248,8 @@ Provide the recommended financial portfolios in JSON format, including:
             },
             {
                 "role": "user",
-                "content": user_risk_profile
+                "content": user_risk_profile + user_financial_goals
             }
         ],
     )
-
     return jsonify(eval(response.choices[0].message.content)), 200
