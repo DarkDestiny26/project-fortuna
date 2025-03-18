@@ -51,8 +51,7 @@ $(document).ready(function() {
     
     // Function to show typing indicator
     function showTypingIndicator() {
-        // Append the typing indicator to the end of the chat container,
-        // ensuring it appears where the next bot message will be added.
+        // Append the typing indicator to the end of the chat container, ensuring it appears where the next bot message will be added.
         $chatMessages.append($typingIndicator);
         $typingIndicator.css('display', 'flex');
         scrollToBottom();
@@ -72,54 +71,51 @@ $(document).ready(function() {
         }, 100); // Small timeout to ensure DOM is updated
     }
     
-    // Mock response function (replace with actual API call)
-    function getBotResponse(message) {
-        return new Promise((resolve) => {
-            // Simulate network delay
-            setTimeout(() => {
-                const responses = [
-                    "I can help you analyze your current portfolio performance.",
-                    "Based on your risk profile, I recommend diversifying into more ETFs.",
-                    "Your investment goal of retirement in 15 years suggests a moderate growth strategy.",
-                    "The market has been volatile lately. Would you like me to suggest some defensive positions?",
-                    "I've analyzed your holdings and noticed your tech allocation is above your target range."
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                resolve(randomResponse);
-            }, 1500);
-        });
-    }
-    
-    // Send message function
+    // Initialises Assistant and Thread objects for chat session 
+    $.ajax({
+        url: "init_chat",
+        type: "GET",
+        success: function(response) {
+            console.log("Chat initialized:", response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error initializing chat:", error);
+        }
+    });
+
     async function sendMessage() {
         const message = $messageInput.val().trim();
         if (!message) return;
-        
-        // Add user message
+    
+        // Add user message to chat UI
         addMessage(message, true);
-        
-        // Clear input
+    
+        // Clear input field
         $messageInput.val('');
-        
+    
         // Show typing indicator
         showTypingIndicator();
-        
+    
         try {
-            // Get bot response
-            const response = await getBotResponse(message);
-            
+            // Send only the latest user message to backend
+            const response = await fetch('get_model_response', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })  // Sending only the latest message
+            });
+    
+            const data = await response.json();
+    
             // Hide typing indicator and add bot response
             hideTypingIndicator();
-            addMessage(response);
+            addMessage(data.response); // Display bot response
         } catch (error) {
-            // Hide typing indicator and show error
             hideTypingIndicator();
-            addMessage("Sorry, I'm having trouble responding right now. Please try again later.");
-            console.error("Error getting response:", error);
+            addMessage("Sorry, I'm having trouble responding right now.");
+            console.error("Error:", error);
         }
     }
     
-    // Event listeners
     $sendButton.on('click', sendMessage);
     
     $messageInput.on('keypress', function(e) {
