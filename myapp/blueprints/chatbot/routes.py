@@ -5,6 +5,7 @@ from sqlalchemy.orm import joinedload
 from myapp.blueprints.auth.models import FinancialGoal
 from myapp.blueprints.portfolio.models import UserPortfolio
 from myapp.app import db
+from myapp.blueprints.chatbot.utils import get_portfolios, get_user_portfolios, get_risk_profile, get_financial_goals, get_transactions, get_current_date
 
 from datetime import datetime
 import os
@@ -76,7 +77,7 @@ def get_model_response():
         assistant_id=assistant_id,
     )
 
-    # Return model response
+    # Return model response if run is completed
     if run.status == 'completed': 
         messages = client.beta.threads.messages.list(
             thread_id=thread_id
@@ -84,13 +85,93 @@ def get_model_response():
         model_response = messages.data[0].content[0].text.value
         print(messages.data)
         return jsonify({'response':model_response}), 200
+    
+    elif run.status == 'requires_action':
+       # Account for mutliple rounds of runs that require function calling
+       while run.status == 'requires_action':
+            # Define the list to store tool outputs
+            tool_outputs = []
+            
+            # Loop through each tool in the required action section
+            for tool in run.required_action.submit_tool_outputs.tool_calls:
+                if tool.function.name == "get_portfolios":
+                    # Get function arguments dict
+                    args_dict = eval(tool.function.arguments)
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": get_portfolios(args_dict.get('p_name'))
+                    })
+                elif tool.function.name == "get_user_portfolios":
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": get_user_portfolios(current_user.id)
+                    })
+                elif tool.function.name == "get_risk_profile":
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output":get_risk_profile(current_user.id)
+                    })
+                elif tool.function.name == "get_financial_goals":
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": get_financial_goals(current_user.id)
+                    })
+                elif tool.function.name == "get_current_date":
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": get_current_date()
+                    })
+                elif tool.function.name == "get_transactions":
+                    # Get function arguments dict
+                    args_dict = eval(tool.function.arguments)
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": get_transactions(user_id=current_user.id, 
+                                                month=int(args_dict.get("month")), 
+                                                year=int(args_dict.get("year")))
+                    })
+    
+            # Submit all tool outputs at once after collecting them in a list
+            if tool_outputs:
+                try:
+                    run = client.beta.threads.runs.submit_tool_outputs_and_poll(
+                    thread_id=thread_id,
+                    run_id=run.id,
+                    tool_outputs=tool_outputs
+                    )
+                    print("Tool outputs submitted successfully.")
+
+                    # Model successful in generating response with tool output
+                    if run.status == 'completed': 
+                        messages = client.beta.threads.messages.list(
+                            thread_id=thread_id
+                        )
+                        model_response = messages.data[0].content[0].text.value
+                        print(messages.data)
+                        return jsonify({'response':model_response}), 200
+                    
+                    # Run failed when tool output is used in prompt
+                    elif run.status != 'requires_action':
+                        print(run.status)
+                        return jsonify({'error':f"Run failed with status:{run.status}"}), 400
+                    
+                # Tool outputs failed submission       
+                except Exception as e:
+                    return jsonify({'error':f"Failed to submit tool outputs: {e}"}), 
+                    
+            else:
+                return jsonify({'error':"No tool outputs to submit."}), 400
+        
+    # Initial run failed
     else:
         print(run)
         return jsonify({'error':f"Run failed with status:{run.status}"}), 400
 
     # import time
+    # from myapp.blueprints.chatbot.utils import get_transactions
+
     # time.sleep(2)
-    # return jsonify({'response':'This is a bot message'}), 200
+    # return jsonify({'response':get_transactions(user_id=current_user.id, month=3, year=2025)}), 200
 
 
 

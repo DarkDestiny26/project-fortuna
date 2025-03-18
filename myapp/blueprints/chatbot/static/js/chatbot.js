@@ -72,7 +72,7 @@ $(document).ready(function() {
     }
     
     // Initialises Assistant and Thread objects for chat session 
-    $.ajax({
+    let chatInit = $.ajax({
         url: "init_chat",
         type: "GET",
         success: function(response) {
@@ -92,10 +92,12 @@ $(document).ready(function() {
     
         // Clear input field
         $messageInput.val('');
-    
-        // Show typing indicator
+
         showTypingIndicator();
-    
+
+        // Wait for chatbot to finish initialising before calling backend
+        await chatInit;
+
         try {
             // Send only the latest user message to backend
             const response = await fetch('get_model_response', {
@@ -117,7 +119,7 @@ $(document).ready(function() {
     }
     
     $sendButton.on('click', sendMessage);
-    
+
     $messageInput.on('keypress', function(e) {
         if (e.keyCode === 13) {  // Enter key
             sendMessage();
