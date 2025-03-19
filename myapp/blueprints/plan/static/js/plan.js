@@ -398,16 +398,6 @@ $(document).ready(function() {
         });
     });
 
-    // Remove transactions button
-    $('#removeBtn').on('click', function() {
-        if (confirm('Are you sure you want to remove all transactions for this period?')) {
-            // In a real app, this would delete the transactions
-            alert('Transactions removed successfully');
-            
-            // Clear the transactions table (in this demo)
-            $('#transactionsTable').empty();
-        }
-    });
 
     // AJAX call to get LLM generated report
     $("#viewReportBtn").on('click', ()=>{
