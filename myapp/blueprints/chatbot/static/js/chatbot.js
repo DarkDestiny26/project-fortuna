@@ -3,6 +3,18 @@ $(document).ready(function() {
     const $sendButton = $('#sendButton');
     const $chatMessages = $('#chatMessages');
     const $typingIndicator = $('#typingIndicator');
+
+    // Configure marked.js options
+    marked.setOptions({
+        breaks: true,           // Add line breaks on single line breaks
+        gfm: true,              // Use GitHub Flavored Markdown
+        headerIds: false,       // Don't add IDs to headers (for simplicity)
+        mangle: false,          // Don't mangle email addresses
+        sanitize: false,        // Let the browser handle HTML sanitization
+        smartLists: true,       // Use smarter list behavior than default markdown
+        smartypants: true,      // Use "smart" typographic punctuation
+        xhtml: false            // Don't use self-closing tags for HTML
+    });
     
     // Function to add a new message to the chat
     function addMessage(content, isUser = false) {
@@ -34,7 +46,7 @@ $(document).ready(function() {
                             <span class="bot-name">Fortuna</span>
                         </div>
                         <div class="message message-bot">
-                            ${content}
+                            ${marked.parse(content)}
                             <div class="message-time">${timeString}</div>
                         </div>
                     </div>

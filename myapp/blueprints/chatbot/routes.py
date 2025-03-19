@@ -36,7 +36,17 @@ def init_chat():
             messages=[
                 {
                 "role": "assistant",
-                "content": "Hello! I'm Fortuna, your personal AI financial advisor. How can I help you today with your wealth management journey?",
+                "content": '''
+                        <h3>Welcome to Fortuna</h3>
+                        <p>Hello! I'm your personal AI financial advisor. I can help you with:</p>
+                        <ul>
+                            <li>Portfolio analysis and recommendations</li>
+                            <li>Investment strategy planning</li>
+                            <li>Retirement planning</li>
+                            <li>Risk assessment</li>
+                        </ul>
+                        <p>How can I assist you with your wealth management today?</p>
+                        '''
                 }
             ]
         )
