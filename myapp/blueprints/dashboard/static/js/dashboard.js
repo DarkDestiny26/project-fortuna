@@ -122,7 +122,8 @@ $(document).ready(function() {
         const pnlElement = $("#pnl");
         const returnsElement = $("#returns");
         const badgeElement = $(".badge");
-        const graphIcon = $(".icon i");
+        const graph = $("#graph");
+        const graphIcon = $("#graph i");
         
         const pnlFormatted = (pnl >= 0 ? "+" : "-") + "$" + Math.abs(pnl).toLocaleString(undefined, { maximumFractionDigits: 0 });
         const returnsFormatted = Math.abs(totalReturns).toFixed(2) + "%";
@@ -134,11 +135,13 @@ $(document).ready(function() {
             pnlElement.removeClass("text-danger").addClass("text-success");
             badgeElement.removeClass("badge-danger").addClass("badge-success");
             returnsElement.removeClass("bi-arrow-down").addClass("bi-arrow-up");
+            graph.removeClass("danger").addClass("success");
             graphIcon.removeClass("bi-graph-down").addClass("bi-graph-up");
         } else {
             pnlElement.removeClass("text-success").addClass("text-danger");
             badgeElement.removeClass("badge-success").addClass("badge-danger");
             returnsElement.removeClass("bi-arrow-up").addClass("bi-arrow-down");
+            graph.removeClass("success").addClass("danger");
             graphIcon.removeClass("bi-graph-up").addClass("bi-graph-down");
         }
     }

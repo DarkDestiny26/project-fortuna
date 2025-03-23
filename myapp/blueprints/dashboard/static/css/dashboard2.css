@@ -1,6 +1,7 @@
 :root {
     --primary-color: #6366f1;
     --success-color: #22c55e;
+    --danger-color: rgb(239, 68, 68);
     --card-background: #ffffff;
     --text-primary: #1e293b;
     --text-secondary: #64748b;
@@ -43,9 +44,15 @@ h1 {
     font-size: 1.5rem;
 }
 
-.stats-card .icon.success {
-    background-color: rgba(34, 197, 94, 0.1);
-    color: var(--success-color);
+.stats-card{ 
+    .icon.success {
+        background-color: rgba(34, 197, 94, 0.1);
+        color: var(--success-color);
+    }
+    .icon.danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+    }
 }
 
 .stats-card .icon.primary {
@@ -178,6 +185,11 @@ h1 {
 .badge-success {
     background-color: rgba(34, 197, 94, 0.1);
     color: var(--success-color);
+}
+
+.badge-danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
 }
 
 .start-date, .target-date {
