@@ -21,14 +21,14 @@ def login():
         
         # If username does not exist in database
         if not user:
-            return "This user doesnt exist womp womp"
+            return render_template('auth/login.html', username_error="Invalid username")
 
         # If username in database, check password
         if auth.bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for('dashboard.index'))
         else:
-            return 'U typed the wrong password baka!'
+           return render_template('auth/login.html', password_error="Incorrect password")
 
 
 @auth.route('/create-account', methods=['GET', 'POST'])

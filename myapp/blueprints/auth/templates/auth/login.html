@@ -12,15 +12,23 @@
                     <form action="{{url_for('auth.login')}}" method="POST">
                         <div class="mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                <input type="text" class="form-control {% if username_error %}is-invalid{% endif %}" 
+                                       id="username" name="username" placeholder="Username" required>
                                 <label for="username">Username</label>
                             </div>
+                            {% if username_error %}
+                                <div class="error-message">{{ username_error }}</div>
+                            {% endif %}
                         </div>
                         <div class="mb-3">
                             <div class="form-floating">
-                                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                <input type="password" class="form-control {% if password_error %}is-invalid{% endif %}" 
+                                       id="password" name="password" placeholder="Password" required>
                                 <label for="password">Password</label>
                             </div>
+                            {% if password_error %}
+                                <div class="error-message">{{ password_error }}</div>
+                            {% endif %}
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary btn-lg">Log In</button>
@@ -34,5 +42,3 @@
         </div>
     </div>
 {% endblock %}
-
-
