@@ -89,7 +89,7 @@ def questionaire():
         decision = request.form.get('decision')
 
         # Retrieve selected portfolio
-        portfolio = request.form.get('portfolio')
+        portfolio = "lmao"
 
         # Store data in session
         session['questionaire'] = {
