@@ -36,9 +36,18 @@ def create_account():
     session['step'] = 'create-account'  # Set the first step
 
     if request.method == 'POST':
-        # Create user
         username = request.form.get('username')
         password = request.form.get('password')
+
+        # Check if username already exists in the database
+        existing_user = User.query.filter_by(username=username).first()
+        
+        if existing_user:
+            # Username already exists, display error message
+            return render_template('auth/create_account.html', 
+                                  username_error="This username is already taken. Please choose another.")
+        
+        # else create user
         password_hash = auth.bcrypt.generate_password_hash(password).decode('utf-8')
         user = User(username=username, password_hash=password_hash)
         db.session.add(user)
