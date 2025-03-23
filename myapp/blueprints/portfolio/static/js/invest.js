@@ -166,6 +166,12 @@ $(document).ready(function() {
     function renderReturnsChart(dates, returns) {
         const ctx = document.getElementById('returnsChart').getContext('2d');
 
+        // Define colors for positive and negative returns
+        const positiveLineColor = '#10b981';    // Green line
+        const negativeLineColor = '#ef4444';    // Red line
+        const positiveFillColor = 'rgba(16, 185, 129, 0.1)'; // Light green fill
+        const negativeFillColor = 'rgba(239, 68, 68, 0.1)';  // Light red fill
+
         if (returnsChart) {
             returnsChart.data.labels = dates;
             returnsChart.data.datasets[0].data = returns.map(r => r * 100); // Convert to %
@@ -179,11 +185,21 @@ $(document).ready(function() {
                     datasets: [{
                         label: 'Portfolio Cumulative Return (%)',
                         data: returns.map(r => r * 100),
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true,
+                        segment: {
+                            borderColor: ctx => {
+                                // Get the y value of the current data point
+                                const yValue = ctx.p1.parsed.y;
+                                // Return color based on whether value is above or below 0
+                                return yValue >= 0 ? positiveLineColor : negativeLineColor;
+                            }
+                        },
+                        fill: {
+                            target: 'origin',
+                            above: positiveFillColor,  // Area above the x-axis
+                            below: negativeFillColor   // Area below the x-axis
+                        },
                         tension: 0.4,
-                        pointRadius: 1,
+                        pointRadius: 0,
                         pointBackgroundColor: '#10b981'
                     }]
                 },
