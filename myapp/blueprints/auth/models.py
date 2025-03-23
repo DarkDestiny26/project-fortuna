@@ -35,7 +35,6 @@ class Questionaire(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "labels": self.labels,
             "start_withdrawal": self.start_withdrawal,
             "spend_funds": self.spend_funds,
             "knowledge": self.knowledge,
