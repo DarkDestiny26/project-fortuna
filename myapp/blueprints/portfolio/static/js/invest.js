@@ -79,8 +79,16 @@ $(document).ready(function() {
                     if (dailyReturn > 0) {
                         $("#dailyChange").removeClass("text-danger").addClass("text-success");
                         $("#dailyChange").prepend("+");
+                        $("#dailyChangeBadge").removeClass("badge-danger").addClass("badge-success");
+                        $("#dailyChangeBadge i").removeClass("bi-arrow-down").addClass("bi-arrow-up");
+                        $("#dailyChangeIcon").removeClass("danger").addClass("success");
+                        $("#dailyChangeIcon i").removeClass("bi-graph-down").addClass("bi-graph-up");
                     } else {
                         $("#dailyChange").removeClass("text-success").addClass("text-danger");
+                        $("#dailyChangeBadge").removeClass("badge-success").addClass("badge-danger");
+                        $("#dailyChangeBadge i").removeClass("bi-arrow-up").addClass("bi-arrow-down");
+                        $("#dailyChangeIcon").removeClass("success").addClass("danger");
+                        $("#dailyChangeIcon i").removeClass("bi-graph-up").addClass("bi-graph-down")
                     }
                 } else {
                     console.error("Error fetching daily performance:", data);
