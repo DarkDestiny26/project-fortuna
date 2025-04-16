@@ -110,10 +110,14 @@ def upload_csv():
         file_path = os.path.join(upload_folder, filename)
         os.remove(file_path)
 
+    # Get all Transactions belonging to current user
+    all_transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    all_transactions_dict = [transaction.to_dict() for transaction in all_transactions]
+
     # Convert NaN values to None (JSON-safe)
     response_data = {
         "message": f"{len(transactions)} transactions saved successfully.",
-        "transactions": [transaction.to_dict() for transaction in transactions]
+        "transactions": all_transactions_dict # Return all user transactions in db
     }
 
     response = make_response(jsonify(response_data))
@@ -248,8 +252,12 @@ def process_classification_batch():
         file_path = os.path.join(upload_folder, filename)
         os.remove(file_path)
 
+    # Get all Transactions belonging to current user
+    all_transactions = Transaction.query.filter_by(user_id=current_user.id).all()
+    all_transactions_dict = [transaction.to_dict() for transaction in all_transactions]
+
     return jsonify({"message": f"All {len(results)} transactions have been classified",
-                    "transactions": [transaction.to_dict() for transaction in transactions]}), 200
+                    "transactions": all_transactions_dict}), 200  # Return all user transactions in db
 
 
 @plan.route("/generate_financial_report", methods=["POST"])
