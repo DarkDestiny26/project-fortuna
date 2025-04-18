@@ -30,8 +30,28 @@ The goal of this project is to build a Minimum Viable Product to showcase the ap
 
 ## Demo
 ### Create new account
-![](assets\gifs\create_account.gif)
+![](assets/gifs/create_account.gif)
 
 ### Portfolio menu
-![](assets\gifs\portfolio_menu.gif)
+![](assets/gifs/portfolio_menu.gif)
+
+### Add new portfolio to account
+![](assets/gifs/add_portfolio.gif)
+
+### AI portfolio recommender
+![](assets/gifs/ai_portfolio_recommender.gif)
+
+### Upload bank transactions
+![](assets/gifs/upload_transactions.gif)
+
+### AI transaction classifier
+![](assets/gifs/transactions_classified.gif)
+
+### AI financial report
+![](assets/gifs/ai_finiancial_report.gif)
+
+### AI financial advisor chatbot
+![](assets/gifs/chatbot.gif)
+
+
 
