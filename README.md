@@ -30,7 +30,7 @@ The goal of this project is to build a Minimum Viable Product to showcase the ap
 
 
 ## Documentation
-All documentation for this project can be found in my ![Final Year Project Report](FYP_Amended_Final_Report.pdf)
+All documentation for this project can be found in my [Final Year Project Report](FYP_Amended_Final_Report.pdf)
 
 ## Demo
 ### Create new account
