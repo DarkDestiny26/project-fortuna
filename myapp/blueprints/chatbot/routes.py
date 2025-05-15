@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 from myapp.blueprints.auth.models import FinancialGoal
 from myapp.blueprints.portfolio.models import UserPortfolio
 from myapp.app import db
-from myapp.blueprints.chatbot.utils import get_portfolios, get_user_portfolios, get_risk_profile, get_financial_goals, get_transactions, get_current_date
+from myapp.blueprints.chatbot.utils import get_portfolios, get_user_portfolios, get_risk_profile, get_financial_goals, get_transactions, get_current_date, search_web
 
 from datetime import datetime
 import os
@@ -139,6 +139,13 @@ def get_model_response():
                         "output": get_transactions(user_id=current_user.id, 
                                                 month=int(args_dict.get("month")), 
                                                 year=int(args_dict.get("year")))
+                    })
+                elif tool.function.name == "search_web":
+                    # Get function arguments dict
+                    args_dict = eval(tool.function.arguments)
+                    tool_outputs.append({
+                        "tool_call_id": tool.id,
+                        "output": search_web(args_dict.get("query"))
                     })
     
             # Submit all tool outputs at once after collecting them in a list

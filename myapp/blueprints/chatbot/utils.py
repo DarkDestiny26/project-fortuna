@@ -3,6 +3,10 @@ from myapp.blueprints.portfolio.models import Portfolio, UserPortfolio
 from myapp.blueprints.auth.models import Questionaire, FinancialGoal
 from myapp.blueprints.plan.models import Transaction
 from datetime import datetime
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
 
 def get_portfolios(p_name):
     """
@@ -104,3 +108,24 @@ def get_transactions(month, year, user_id):
 
     tr_list = [tr.to_dict() for tr in transactions]
     return str(tr_list)  # Returns a list of Transaction objects
+
+
+def search_web(query):
+    """
+    Uses OpenAI's gpt-4o-mini-search-preview to perform a web search.
+    """
+    load_dotenv()
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+
+    client = OpenAI()
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini-search-preview",
+        web_search_options={},
+        messages=[
+            {
+                "role": "user",
+                "content": query,
+            }
+        ],
+    )
+    return completion.choices[0].message.content
