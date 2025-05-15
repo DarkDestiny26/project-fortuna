@@ -9,15 +9,13 @@ Welcome to Project Fortuna! This is a wealth management web application built fo
 
 The goal of this project is to build a Minimum Viable Product to showcase the applications of Large Langauge Models (LLMs) in the field of wealth management, especially personal finance.
 
-## Application Features
-- Account registration
-- Purchase Financial Portfolios
-- User Dashboard
-- Monthly Expenses Tracker
+## ✨ LLM Features
+- AI Portfolio Recommender
+- AI Transaction Classifier
+- AI Monthly Expenditure Report
 - AI Financial Advisor Chatbot
 
-
-## Tech Stack
+## 🛠️ Tech Stack
 
 **Frontend:**  
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![jQuery](https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white) ![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white) ![Jinja](https://img.shields.io/badge/Jinja-B41717.svg?style=for-the-badge&logo=Jinja&logoColor=white) ![Chart.js](https://img.shields.io/badge/chart.js-F5788D.svg?style=for-the-badge&logo=chart.js&logoColor=white) 
@@ -29,10 +27,10 @@ The goal of this project is to build a Minimum Viable Product to showcase the ap
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 
 
-## Documentation
+## 📄 Documentation
 All documentation for this project can be found in my [Final Year Project Report](FYP_Amended_Final_Report.pdf)
 
-## Demo
+## 🎬 Demo
 ### Create new account
 ![](assets/gifs/create_account.gif)
 
@@ -51,7 +49,7 @@ All documentation for this project can be found in my [Final Year Project Report
 ### AI transaction classifier
 ![](assets/gifs/transactions_classified.gif)
 
-### AI financial report
+### AI monthly expenditure report
 ![](assets/gifs/ai_finiancial_report.gif)
 
 ### AI financial advisor chatbot
